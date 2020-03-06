@@ -8,6 +8,7 @@ output:
     lib_dir: libs
     css: ["default", "xaringan-themer.css", "css/footer_plus.css"]
     nature:
+      beforeInit: "https://platform.twitter.com/widgets.js"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -20,10 +21,12 @@ output:
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(knitr)
-knitr::opts_chunk$set(cache = TRUE, warning = FALSE, message = FALSE, dpi = 180)
-library(ggplot2)
+knitr::opts_chunk$set(cache = TRUE, warning = FALSE, 
+                      message = FALSE, dpi = 180, cache.lazy = FALSE)
+library(tidyverse)
 library(silgelib)
 theme_set(theme_plex())
+conflicted::conflict_prefer("filter", "dplyr")
 ```
 
 ```{r include=FALSE, eval=FALSE}
@@ -31,7 +34,8 @@ library(tidyverse)
 
 complaints <- read_csv("complaints.csv.zip") %>%
   janitor::clean_names() %>%
-  filter(!is.na(consumer_complaint_narrative)) %>%
+  filter(date_received >= "2019-01-01",
+         !is.na(consumer_complaint_narrative)) %>%
   select(complaint_id, date_received, product, issue, company, state,
          consumer_complaint_narrative)
 
@@ -43,11 +47,12 @@ write_csv(complaints, "complaints.csv.gz")
 library(xaringanthemer)
 
 mono_accent(
-  base_color = "#132240",
+  base_color           = "#132240",
   header_font_google   = google_font("Trirong", "700"),
   text_font_google     = google_font("Source Sans Pro"),
   code_font_google     = google_font("Droid Mono"),
-  text_font_size       = "30px"
+  text_font_size       = "30px",
+  code_font_size       = "20px"
 )
 ```
 
@@ -84,6 +89,7 @@ background-size: cover
 <a href="mailto:julia.silge@gmail.com" style="color: white;"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; julia.silge@gmail.com</a>
 
 ---
+
 class: inverse, center, middle
 
 # `r emo::ji("bookmark_tabs")` TEXT AS DATA `r emo::ji("bar_chart")`
@@ -98,7 +104,7 @@ Let's look at complaints submitted to the [United States Consumer Financial Prot
 library(tidyverse)
 
 complaints <- read_csv("complaints.csv.gz")
-complaints
+names(complaints)
 ```
 
 ---
@@ -109,500 +115,29 @@ Let's look at complaints submitted to the [United States Consumer Financial Prot
 
 ```{r}
 complaints %>%
-  select(consumer_complaint_narrative) %>%
-  sample_n(10)
-```
-
-
----
-background-image: url(`r xaringan:::karl`)
-background-position: 50% 50%
-class: center, bottom, inverse
-
-# You only live once!
-
----
-
-# Hello Ninja
-
-As a presentation ninja, you certainly should not be satisfied by the "Hello World" example. You need to understand more about two things:
-
-1. The [remark.js](https://remarkjs.com) library;
-
-1. The **xaringan** package;
-
-Basically **xaringan** injected the chakra of R Markdown (minus Pandoc) into **remark.js**. The slides are rendered by remark.js in the web browser, and the Markdown source needed by remark.js is generated from R Markdown (**knitr**).
-
----
-
-# remark.js
-
-You can see an introduction of remark.js from [its homepage](https://remarkjs.com). You should read the [remark.js Wiki](https://github.com/gnab/remark/wiki) at least once to know how to
-
-- create a new slide (Markdown syntax<sup>*</sup> and slide properties);
-
-- format a slide (e.g. text alignment);
-
-- configure the slideshow;
-
-- and use the presentation (keyboard shortcuts).
-
-It is important to be familiar with remark.js before you can understand the options in **xaringan**.
-
-.footnote[[*] It is different with Pandoc's Markdown! It is limited but should be enough for presentation purposes. Come on... You do not need a slide for the Table of Contents! Well, the Markdown support in remark.js [may be improved](https://github.com/gnab/remark/issues/142) in the future.]
-
----
-background-image: url(`r xaringan:::karl`)
-background-size: cover
-class: center, bottom, inverse
-
-# I was so happy to have discovered remark.js!
-
----
-class: inverse, middle, center
-
-# Using xaringan
-
----
-
-# xaringan
-
-Provides an R Markdown output format `xaringan::moon_reader` as a wrapper for remark.js, and you can use it in the YAML metadata, e.g.
-
-```yaml
----
-title: "A Cool Presentation"
-output:
-xaringan::moon_reader
-yolo: true
-nature:
-autoplay: 30000
----
-```
-
-See the help page `?xaringan::moon_reader` for all possible options that you can use.
-
----
-
-# remark.js vs xaringan
-
-Some differences between using remark.js (left) and using **xaringan** (right):
-
-.pull-left[
-1. Start with a boilerplate HTML file;
-
-1. Plain Markdown;
-
-1. Write JavaScript to autoplay slides;
-
-1. Manually configure MathJax;
-
-1. Highlight code with `*`;
-
-1. Edit Markdown source and refresh browser to see updated slides;
-]
-
-.pull-right[
-1. Start with an R Markdown document;
-
-1. R Markdown (can embed R/other code chunks);
-
-1. Provide an option `autoplay`;
-
-1. MathJax just works;<sup>*</sup>
-
-1. Highlight code with `{{}}`;
-
-1. The RStudio addin "Infinite Moon Reader" automatically refreshes slides on changes;
-]
-
-.footnote[[*] Not really. See next page.]
-
----
-
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
-
----
-
-# R Code
-
-```{r comment='#'}
-# a boring regression
-fit = lm(dist ~ 1 + speed, data = cars)
-coef(summary(fit))
-dojutsu = c('地爆天星', '天照', '加具土命', '神威', '須佐能乎', '無限月読')
-grep('天', dojutsu, value = TRUE)
+  sample_n(7) %>%
+  pull(consumer_complaint_narrative)
 ```
 
 ---
 
-# R Plots
+# Text as data
 
-```{r cars, fig.height=4, dev='svg'}
-par(mar = c(4, 4, 1, .1))
-plot(cars, pch = 19, col = 'darkgray', las = 1)
-abline(fit, lwd = 2)
-```
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+What is a typical way to represent this text data for modeling?
 
 ```{r}
-knitr::kable(head(iris), format = 'html')
+library(tidytext)
+library(SnowballC)
+
+complaints %>% 
+  unnest_tokens(word, consumer_complaint_narrative) %>% 
+  anti_join(get_stopwords()) %>%  
+  mutate(stem = wordStem(word)) %>% 
+  count(complaint_id, stem) %>%  
+  bind_tf_idf(stem, complaint_id, n) %>% 
+  cast_dfm(complaint_id, stem, tf_idf)
 ```
 
----
-
-# HTML Widgets
-
-I have not thoroughly tested HTML widgets against **xaringan**. Some may work well, and some may not. It is a little tricky.
-
-Similarly, the Shiny mode (`runtime: shiny`) does not work. I might get these issues fixed in the future, but these are not of high priority to me. I never turn my presentation into a Shiny app. When I need to demonstrate more complicated examples, I just launch them separately. It is convenient to share slides with other people when they are plain HTML/JS applications.
-
-See the next page for two HTML widgets.
-
----
-
-```{r out.width='100%', fig.height=6, eval=require('leaflet')}
-library(leaflet)
-leaflet() %>% addTiles() %>% setView(-93.65, 42.0285, zoom = 17)
-```
-
----
-
-```{r eval=require('DT'), tidy=FALSE}
-DT::datatable(
-  head(iris, 10),
-  fillContainer = FALSE, options = list(pageLength = 8)
-)
-```
-
----
-
-# Some Tips
-
-- When you use the "Infinite Moon Reader" addin in RStudio, your R session will be blocked by default. You can click the red button on the right of the console to stop serving the slides, or use the _daemonized_ mode so that it does not block your R session. To do the latter, you can set the option
-
-```r
-options(servr.daemon = TRUE)
-```
-
-in your current R session, or in `~/.Rprofile` so that it is applied to all future R sessions. I do the latter by myself.
-
-To know more about the web server, see the [**servr**](https://github.com/yihui/servr) package.
-
---
-
-- Do not forget to try the `yolo` option of `xaringan::moon_reader`.
-
-```yaml
-output:
-xaringan::moon_reader:
-yolo: true
-```
-
----
-
-# Some Tips
-
-- Slides can be automatically played if you set the `autoplay` option under `nature`, e.g. go to the next slide every 30 seconds in a lightning talk:
-
-```yaml
-output:
-xaringan::moon_reader:
-nature:
-autoplay: 30000
-```
-
---
-
-- A countdown timer can be added to every page of the slides using the `countdown` option under `nature`, e.g. if you want to spend one minute on every page when you give the talk, you can set:
-
-```yaml
-output:
-xaringan::moon_reader:
-nature:
-countdown: 60000
-```
-
-Then you will see a timer counting down from `01:00`, to `00:59`, `00:58`, ... When the time is out, the timer will continue but the time turns red.
-
----
-
-# Some Tips
-
-- There are several ways to build incremental slides. See [this presentation](https://slides.yihui.name/xaringan/incremental.html) for examples.
-
-- The option `highlightLines: true` of `nature` will highlight code lines that start with `*`, or are wrapped in `{{ }}`, or have trailing comments `#<<`;
-
-```yaml
-output:
-xaringan::moon_reader:
-nature:
-highlightLines: true
-```
-
-See examples on the next page.
-
----
-
-# Some Tips
-
-
-.pull-left[
-An example using a leading `*`:
-
-```r
-if (TRUE) {
-** message("Very important!")
-}
-```
-Output:
-```r
-if (TRUE) {
-* message("Very important!")
-}
-```
-
-This is invalid R code, so it is a plain fenced code block that is not executed.
-]
-
-.pull-right[
-An example using `{{}}`:
-
-`r ''````{r tidy=FALSE}
-if (TRUE) {
-*{{ message("Very important!") }}
-}
-```
-Output:
-```{r tidy=FALSE}
-if (TRUE) {
-{{ message("Very important!") }}
-}
-```
-
-It is valid R code so you can run it. Note that `{{}}` can wrap an R expression of multiple lines.
-]
-
----
-
-# Some Tips
-
-An example of using the trailing comment `#<<` to highlight lines:
-
-````markdown
-`r ''````{r tidy=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-aes(mpg, disp) + 
-geom_point() +   #<<
-geom_smooth()    #<<
-```
-````
-
-Output:
-
-```{r tidy=FALSE, eval=FALSE}
-library(ggplot2)
-ggplot(mtcars) + 
-aes(mpg, disp) + 
-geom_point() +   #<<
-geom_smooth()    #<<
-```
-
----
-
-# Some Tips
-
-- To make slides work offline, you need to download a copy of remark.js in advance, because **xaringan** uses the online version by default (see the help page `?xaringan::moon_reader`).
-
-- You can use `xaringan::summon_remark()` to download the latest or a specified version of remark.js. By default, it is downloaded to `libs/remark-latest.min.js`.
-
-- Then change the `chakra` option in YAML to point to this file, e.g.
-
-```yaml
-output:
-xaringan::moon_reader:
-chakra: libs/remark-latest.min.js
-```
-
-- If you used Google fonts in slides (the default theme uses _Yanone Kaffeesatz_, _Droid Serif_, and _Source Code Pro_), they won't work offline unless you download or install them locally. The Heroku app [google-webfonts-helper](https://google-webfonts-helper.herokuapp.com/fonts) can help you download fonts and generate the necessary CSS.
-
----
-
-# Macros
-
-- remark.js [allows users to define custom macros](https://github.com/yihui/xaringan/issues/80) (JS functions) that can be applied to Markdown text using the syntax `![:macroName arg1, arg2, ...]` or `![:macroName arg1, arg2, ...](this)`. For example, before remark.js initializes the slides, you can define a macro named `scale`:
-
-```js
-remark.macros.scale = function (percentage) {
-var url = this;
-return '<img src="' + url + '" style="width: ' + percentage + '" />';
-};
-```
-
-Then the Markdown text
-
-```markdown
-![:scale 50%](image.jpg)
-```
-
-will be translated to
-
-```html
-<img src="image.jpg" style="width: 50%" />
-```
-
----
-
-# Macros (continued)
-
-- To insert macros in **xaringan** slides, you can use the option `beforeInit` under the option `nature`, e.g.,
-
-```yaml
-output:
-xaringan::moon_reader:
-nature:
-beforeInit: "macros.js"
-```
-
-You save your remark.js macros in the file `macros.js`.
-
-- The `beforeInit` option can be used to insert arbitrary JS code before `remark.create()`. Inserting macros is just one of its possible applications.
-
----
-
-# CSS
-
-Among all options in `xaringan::moon_reader`, the most challenging but perhaps also the most rewarding one is `css`, because it allows you to customize the appearance of your slides using any CSS rules or hacks you know.
-
-You can see the default CSS file [here](https://github.com/yihui/xaringan/blob/master/inst/rmarkdown/templates/xaringan/resources/default.css). You can completely replace it with your own CSS files, or define new rules to override the default. See the help page `?xaringan::moon_reader` for more information.
-
----
-
-# CSS
-
-For example, suppose you want to change the font for code from the default "Source Code Pro" to "Ubuntu Mono". You can create a CSS file named, say, `ubuntu-mono.css`:
-
-```css
-@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
-
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-```
-
-Then set the `css` option in the YAML metadata:
-
-```yaml
-output:
-xaringan::moon_reader:
-css: ["default", "ubuntu-mono.css"]
-```
-
-Here I assume `ubuntu-mono.css` is under the same directory as your Rmd.
-
-See [yihui/xaringan#83](https://github.com/yihui/xaringan/issues/83) for an example of using the [Fira Code](https://github.com/tonsky/FiraCode) font, which supports ligatures in program code.
-
----
-
-# Themes
-
-Don't want to learn CSS? Okay, you can use some user-contributed themes. A theme typically consists of two CSS files `foo.css` and `foo-fonts.css`, where `foo` is the theme name. Below are some existing themes:
-
-```{r}
-names(xaringan:::list_css())
-```
-
-To use a theme, you can specify the `css` option as an array of CSS filenames (without the `.css` extensions), e.g.,
-
-```yaml
-output:
-xaringan::moon_reader:
-css: [default, metropolis, metropolis-fonts]
-```
-
-If you want to contribute a theme to **xaringan**, please read [this blog post](https://yihui.name/en/2017/10/xaringan-themes).
-
----
-class: inverse, middle, center
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg)
-background-size: contain
-
-# Naruto
-
----
-background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
-background-size: 100px
-background-position: 90% 8%
-
-# Sharingan
-
-The R package name **xaringan** was derived<sup>1</sup> from **Sharingan**, a dōjutsu in the Japanese anime _Naruto_ with two abilities:
-
-- the "Eye of Insight"
-
-- the "Eye of Hypnotism"
-
-I think a presentation is basically a way to communicate insights to the audience, and a great presentation may even "hypnotize" the audience.<sup>2,3</sup>
-
-.footnote[
-[1] In Chinese, the pronounciation of _X_ is _Sh_ /ʃ/ (as in _shrimp_). Now you should have a better idea of how to pronounce my last name _Xie_.
-
-[2] By comparison, bad presentations only put the audience to sleep.
-
-[3] Personally I find that setting background images for slides is a killer feature of remark.js. It is an effective way to bring visual impact into your presentations.
-]
-
----
-
-# Naruto terminology
-
-The **xaringan** package borrowed a few terms from Naruto, such as
-
-- [Sharingan](http://naruto.wikia.com/wiki/Sharingan) (写輪眼; the package name)
-
-- The [moon reader](http://naruto.wikia.com/wiki/Moon_Reader) (月読; an attractive R Markdown output format)
-
-- [Chakra](http://naruto.wikia.com/wiki/Chakra) (查克拉; the path to the remark.js library, which is the power to drive the presentation)
-
-- [Nature transformation](http://naruto.wikia.com/wiki/Nature_Transformation) (性質変化; transform the chakra by setting different options)
-
-- The [infinite moon reader](http://naruto.wikia.com/wiki/Infinite_Tsukuyomi) (無限月読; start a local web server to continuously serve your slides)
-
-- The [summoning technique](http://naruto.wikia.com/wiki/Summoning_Technique) (download remark.js from the web)
-
-You can click the links to know more about them if you want. The jutsu "Moon Reader" may seem a little evil, but that does not mean your slides are evil.
-
----
-
-class: center
-
-# Hand seals (印)
-
-Press `h` or `?` to see the possible ninjutsu you can use in remark.js.
-
-![](https://upload.wikimedia.org/wikipedia/commons/7/7e/Mudra-Naruto-KageBunshin.svg)
-
----
 
 ---
 
@@ -611,6 +146,583 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
+# This representation...
+
+- is incredibly sparse
+- of high dimensionality
+- with a huge number of features
+
+---
+
+class: inverse, center, middle
+
+# `r emo::ji("page_facing_up")` WORD EMBEDDINGS `r emo::ji("notebook_with_decorative_cover")`
+
+---
+
+class: right, middle
+
+<h1 class="fa fa-quote-left fa-fw"></h1>
+
+<h1> You shall know a word by the company it keeps. </h1>
+
+<h1 class="fa fa-quote-right fa-fw"></h1>
+
+.large[John Rupert Firth]
+
+---
+
+class: inverse
+
+# Modern word embeddings
+
+--
+
+- word2vec
+
+--
+
+- GloVe
+
+--
+
+- fastText
+
+--
+
+- language models with transformers like ULMFiT and ELMo
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# We can determine word embeddings using...
+
+- .large[word counts]
+- .large[matrix factorization]
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+```{r}
+tidy_complaints <- complaints %>%
+  select(complaint_id, consumer_complaint_narrative) %>%
+  unnest_tokens(word, consumer_complaint_narrative) %>%
+  group_by(word) %>%
+  dplyr::filter(n() >= 50) %>%
+  ungroup()
+
+tidy_complaints
+```
+
+---
+
+# Counting words
+
+Next, we can create nested dataframes.
+
+```{r}
+nested_words <- tidy_complaints %>%
+  nest(words = c(word))
+
+nested_words
+```
+
+---
+
+# Time to SLIDE `r emo::ji("zap")`
+
+Our new function identifies skipgram windows in order to calculate the skipgram probabilities.
+
+```{r}
+slide_windows <- function(tbl, window_size) {
+  
+  skipgrams <- slider::slide(
+    tbl, 
+    ~.x, 
+    .after = window_size - 1, 
+    .step = 1, 
+    .complete = TRUE
+  )
+  
+  safe_mutate <- safely(mutate)
+  
+  out <- map2(skipgrams, 
+              1:length(skipgrams), 
+              ~ safe_mutate(.x, window_id = .y))
+  
+  out %>%
+    transpose() %>% 
+    pluck("result") %>% 
+    compact() %>%
+    bind_rows()
+}
+```
+
+---
+
+class: inverse
+
+# Window size? `r emo::ji("thinking")`
+
+--
+
+- Determines semantic meaning the embeddings capture
+
+--
+
+- Smaller window size (3-4) focuses on how the word is used and learns what other words are functionally similar
+
+--
+
+- Larger window size (~10) captures the domain or topic of each word
+
+---
+
+class: inverse
+
+# Point-wise mutual information
+
+--
+
+- How often do words occur on their own?
+
+--
+
+- How often words occur together with other words?
+
+--
+
+- PMI is a measure of association to compute this
+
+-- 
+
+- PMI is logarithm of the probability of finding two words together, normalized for the probability of finding each of the words alone
+
+
+
+---
+
+# Calculate PMI
+
+We use PMI to measure which words occur together more often than expected based on how often they occurred on their own.
+
+```{r}
+library(widyr)
+library(furrr)
+
+plan(multiprocess)  ## for parallel processing
+
+tidy_pmi <- nested_words %>%  
+  mutate(words = future_map(words, slide_windows, 4,
+                            .progress = TRUE)) %>%
+  unnest(words) %>%
+  unite(window_id, complaint_id, window_id) %>%
+  pairwise_pmi(word, window_id)
+
+tidy_pmi
+```
+
+---
+
+# Time for word vectors! `r emo::ji("tada")`
+
+We can determine the word vectors from the PMI values using singular value decomposition.
+
+```{r}
+tidy_word_vectors <- tidy_pmi %>%
+  widely_svd(
+    item1, item2, pmi, 
+    nv = 100, maxit = 1000
+  )
+
+tidy_word_vectors
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Each word can be represented as a numeric vector in this new, dense, 100-dimensional feature space. 
+---
+
+# Explore the CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+```{r}
+nearest_synonyms <- function(df, token) {
+  df %>%
+    widely(~ . %*% (.[token, ]), sort = TRUE, maximum_size = NULL)(item1, dimension, value) %>%
+    select(-item2)
+}
+```
+
+---
+
+# Explore the CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+```{r}
+tidy_word_vectors %>%
+  nearest_synonyms("error")
+```
+
+---
+
+# Explore the CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+```{r}
+tidy_word_vectors %>%
+  nearest_synonyms("month")
+```
+
+---
+
+# Explore the CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+```{r}
+tidy_word_vectors %>%
+  nearest_synonyms("fee")
+```
+
+---
+
+```{r eval=FALSE}
+tidy_word_vectors %>%
+  filter(dimension <= 24) %>%
+  group_by(dimension) %>%
+  top_n(12, abs(value)) %>%
+  ungroup %>%
+  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 6) +
+  coord_flip()
+```
+
+---
+
+```{r echo=FALSE, fig.height=3.9}
+tidy_word_vectors %>%
+  filter(dimension <= 24) %>%
+  group_by(dimension) %>%
+  top_n(12, abs(value)) %>%
+  ungroup %>%
+  mutate(item1 = reorder_within(item1, value, dimension)) %>%
+  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 6) +
+  scale_x_reordered() +
+  coord_flip() +
+  labs(x = NULL, y = "Value")
+```
+
+---
+
+# How do we use these embeddings in modeling?
+
+The classic and simplest approach is to treat each document as a collection of words and summarize the word embeddings into **document embeddings**.
+
+```{r}
+word_matrix <- tidy_complaints %>% 
+  count(complaint_id, word) %>%  
+  cast_sparse(complaint_id, word, n)
+
+embedding_matrix <- tidy_word_vectors %>%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix <- word_matrix %*% embedding_matrix
+
+dim(doc_matrix)
+```
+
+---
+
+class: inverse, center, middle
+
+# `r emo::ji("sob")` WHAT IF YOUR DATASET IS TOO SMALL? `r emo::ji("weary")`
+
+---
+
+# Try pre-trained word embeddings
+
+You can still use word embeddings for feature creation in modeling, just not embeddings that you determine yourself from your own dataset.
+
+```{r}
+library(textdata)
+
+glove6b <- embedding_glove6b(dimensions = 100)
+glove6b
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+```{r}
+tidy_glove <- glove6b %>%
+  pivot_longer(contains("d"),
+               names_to = "dimension") %>%
+  rename(item1 = token)
+
+tidy_glove
+```
+
+---
+
+# Explore the GloVe word embeddings
+
+Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
+
+```{r}
+tidy_glove %>%
+  nearest_synonyms("error")
+```
+
+---
+
+# Explore the GloVe word embeddings
+
+Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
+
+```{r}
+tidy_glove %>%
+  nearest_synonyms("month")
+```
+
+---
+
+# Explore the GloVe word embeddings
+
+Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
+
+```{r}
+tidy_glove %>%
+  nearest_synonyms("fee")
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Pre-trained word embeddings...
+
+- encode rich semantic relationships
+- can be less than ideal for specific tasks
+
+---
+
+class: inverse
+
+# How can we integrate pre-trained word embeddings in modeling?
+
+--
+
+- Again, we can create simple document embeddings by summarizing
+
+--
+
+- The GloVe embeddings do not contain all the tokens in the CPFB complaints, and vice versa
+
+---
+
+# How do we use pre-trained embeddings in modeling?
+
+
+```{r}
+word_matrix <- tidy_complaints %>%
+  inner_join(tidy_glove %>%
+               distinct(item1) %>%
+               rename(word = item1)) %>%
+  count(complaint_id, word) %>%  
+  cast_sparse(complaint_id, word, n)
+
+glove_matrix <- tidy_glove %>%
+  inner_join(tidy_complaints %>% 
+               distinct(word) %>%
+               rename(item1 = word)) %>%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix <- word_matrix %*% glove_matrix
+
+dim(doc_matrix)
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Fairness and word embeddings 
+
+---
+
+# Fairness and word embeddings 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- Human prejudice or bias in the corpus becomes imprinted into the embeddings
+
+---
+
+class: inverse
+
+# Fairness and word embeddings 
+
+--
+
+- African American first names are associated with more unpleasant feelings than European American first names
+
+--
+
+- Women's first names are more associated with family and men's first names are more associated with career
+
+-- 
+
+- Terms associated with women are more associated with the arts and terms associated with men are more associated with science
+
+.footnote[
+(Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.)[http://arxiv.org/abs/1608.07187]
+]
+
+---
+
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Turkish is a gender neutral language. There is no &quot;he&quot; or &quot;she&quot; - everything is just &quot;o&quot;. But look what happens when Google translates to English. Thread: <a href="https://t.co/mIWjP4E6xw">pic.twitter.com/mIWjP4E6xw</a></p>&mdash; Alex Shams (@seyyedreza) <a href="https://twitter.com/seyyedreza/status/935291317252493312?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+---
+
+class: inverse, middle, center
+
+## Bias is so ingrained in word embeddings that it can be used to quantify change in social attitudes over time.
+
+.footnote[
+(Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.)[https://www.pnas.org/content/115/16/E3635]
+]
+
+---
+
+# Biased training data 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- For example, consider the case of Wikipedia
+
+--
+
+- Wikipedia both reflects social/historical biases **and** generates bias
+
+
+.footnote[
+(Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.)[https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4]
+]
+
+---
+
+# How do biased embeddings affect models?
+
+Consider a straightforward sentiment analysis model trained to predict how positive text is. Compare:
+
+.pull-left[
+"Let's go get Italian food!"
+
+`r emo::ji("blush")`
+
+]
+
+.pull-right[
+"Let's go get Mexican food!"
+
+`r emo::ji("confused")`
+]
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## What are our options?
+
+--
+
+- Consider not using embeddings at all
+
+--
+
+- Find your own embeddings
+
+---
+
+class: inverse
+
+# Can embeddings be debiased?
+
+--
+
+- Embeddings can be reprojected to mitigate a specific bias (such as gender bias) using specific sets of words
+
+--
+
+- Newer work involves the idea of augmenting the training data with counterfactuals
+
+-- 
+
+- Other researchers suggest that corrections for fairness happen at the point of **decision**
+
+-- 
+
+- Evidence indicates that methods for debiasing allow the stereotypes to seep back in
+
+.footnote[
+(Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).)[http://arxiv.org/abs/1903.03862]
+]
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Word embeddings in the real world
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
 
 # Thanks!
 
