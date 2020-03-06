@@ -26,6 +26,19 @@ library(silgelib)
 theme_set(theme_plex())
 ```
 
+```{r include=FALSE, eval=FALSE}
+library(tidyverse)
+
+complaints <- read_csv("complaints.csv.zip") %>%
+  janitor::clean_names() %>%
+  filter(!is.na(consumer_complaint_narrative)) %>%
+  select(complaint_id, date_received, product, issue, company, state,
+         consumer_complaint_narrative)
+
+write_csv(complaints, "complaints.csv.gz")
+```
+
+
 ```{r xaringan-themer, include = FALSE}
 library(xaringanthemer)
 
@@ -71,46 +84,35 @@ background-size: cover
 <a href="mailto:julia.silge@gmail.com" style="color: white;"><i class="fa fa-paper-plane fa-fw"></i>&nbsp; julia.silge@gmail.com</a>
 
 ---
-class: center, middle
-
-# xaringan
-
-### /ʃæ.'riŋ.ɡæn/
-
----
 class: inverse, center, middle
 
-# Get Started
+# `r emo::ji("bookmark_tabs")` TEXT AS DATA `r emo::ji("bar_chart")`
 
 ---
 
-# Hello World
+# Text as data
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
 
-```{r eval=FALSE, tidy=FALSE}
-devtools::install_github("yihui/xaringan")
+```{r}
+library(tidyverse)
+
+complaints <- read_csv("complaints.csv.gz")
+complaints
 ```
 
---
+---
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to.
+# Text as data
 
-- Create a new R Markdown document from the menu `File -> New File -> R Markdown -> From Template -> Ninja Presentation`;<sup>1</sup>
+Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
 
---
+```{r}
+complaints %>%
+  select(consumer_complaint_narrative) %>%
+  sample_n(10)
+```
 
-- Click the `Knit` button to compile it;
-
---
-
-- or use the [RStudio Addin](https://rstudio.github.io/rstudioaddins/)<sup>2</sup> "Infinite Moon Reader" to live preview the slides (every time you update and save the Rmd document, the slides will be automatically reloaded in RStudio Viewer.
-
-.footnote[
-[1] 中文用户请看[这份教程](http://slides.yihui.name/xaringan/zh-CN.html)
-
-[2] See [#2](https://github.com/yihui/xaringan/issues/2) if you do not see the template or addin in RStudio.
-]
 
 ---
 background-image: url(`r xaringan:::karl`)

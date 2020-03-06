@@ -66,26 +66,22 @@ background-size: cover
 &lt;a href="mailto:julia.silge@gmail.com" style="color: white;"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; julia.silge@gmail.com&lt;/a&gt;
 
 ---
-class: center, middle
-
-# xaringan
-
-### /ʃæ.'riŋ.ɡæn/
-
----
 class: inverse, center, middle
 
-# Get Started
+# 📑 TEXT AS DATA 📊
 
 ---
 
-# Hello World
+# Text as data
 
-Install the **xaringan** package from [Github](https://github.com/yihui/xaringan):
+Let's look at complaints submitted to [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
 
 
 ```r
-devtools::install_github("yihui/xaringan")
+library(tidyverse)
+library(tidytext)
+
+complaints &lt;- read_csv("complaints.csv.zip")
 ```
 
 --
