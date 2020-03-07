@@ -112,14 +112,6 @@ names(complaints)
 # Text as data
 
 ```{r}
-skimr::skim(complaints)
-```
-
----
-
-# Text as data
-
-```{r}
 complaints %>%
   sample_n(10) %>%
   pull(consumer_complaint_narrative)
@@ -558,11 +550,11 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-# Pre-trained word embeddings...
+## Pre-trained word embeddings...
 
-- .large[encode rich semantic relationships]
+- encode rich semantic relationships
 
-- .large[can be less than ideal for specific tasks]
+- can be less than ideal for specific tasks
 
 ---
 
@@ -607,7 +599,8 @@ background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
 # Fairness and 
-# word embeddings 
+# Word 
+# Embeddings 
 
 ---
 
