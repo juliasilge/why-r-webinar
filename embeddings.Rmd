@@ -1,6 +1,5 @@
 ---
 title: "Understanding Word Embeddings"
-subtitle: "\u2694 <br/>with xaringan and xaringanthemer"  
 author: "Julia Silge"
 date: '2020-03-12`'
 output:
@@ -52,7 +51,8 @@ mono_accent(
   text_font_google     = google_font("Source Sans Pro"),
   code_font_google     = google_font("Droid Mono"),
   text_font_size       = "30px",
-  code_font_size       = "20px"
+  code_font_size       = "20px",
+  footnote_font_size   = "18px" 
 )
 ```
 
@@ -71,7 +71,7 @@ background-size: cover
 # Word 
 # Embeddings
 
-.large[Julia Silge | 12 March 2020]
+### Julia Silge | 12 March 2020
 
 ---
 
@@ -111,11 +111,17 @@ names(complaints)
 
 # Text as data
 
-Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
+```{r}
+skimr::skim(complaints)
+```
+
+---
+
+# Text as data
 
 ```{r}
 complaints %>%
-  sample_n(7) %>%
+  sample_n(10) %>%
   pull(consumer_complaint_narrative)
 ```
 
@@ -148,9 +154,9 @@ background-size: cover
 
 # This representation...
 
-- is incredibly sparse
-- of high dimensionality
-- with a huge number of features
+- .large[is incredibly sparse]
+- .large[of high dimensionality]
+- .large[with a huge number of features]
 
 ---
 
@@ -210,7 +216,24 @@ background-size: cover
 
 First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
 
-```{r}
+```{r eval=FALSE}
+tidy_complaints <- complaints %>%
+  select(complaint_id, consumer_complaint_narrative) %>%
+  unnest_tokens(word, consumer_complaint_narrative) %>%
+  group_by(word) %>%
+  filter(n() >= 50) %>%
+  ungroup()
+
+tidy_complaints
+```
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+```{r echo=FALSE}
 tidy_complaints <- complaints %>%
   select(complaint_id, consumer_complaint_narrative) %>%
   unnest_tokens(word, consumer_complaint_narrative) %>%
@@ -238,24 +261,16 @@ nested_words
 
 # Time to SLIDE `r emo::ji("zap")`
 
-Our new function identifies skipgram windows in order to calculate the skipgram probabilities.
+Let's identify **windows** in order to calculate the skipgram probabilities.
 
 ```{r}
 slide_windows <- function(tbl, window_size) {
   
-  skipgrams <- slider::slide(
-    tbl, 
-    ~.x, 
-    .after = window_size - 1, 
-    .step = 1, 
-    .complete = TRUE
-  )
+  skipgrams <- slider::slide(tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE)
   
   safe_mutate <- safely(mutate)
   
-  out <- map2(skipgrams, 
-              1:length(skipgrams), 
-              ~ safe_mutate(.x, window_id = .y))
+  out <- map2(skipgrams, 1:length(skipgrams), ~ safe_mutate(.x, window_id = .y))
   
   out %>%
     transpose() %>% 
@@ -301,7 +316,7 @@ class: inverse
 
 - PMI is a measure of association to compute this
 
--- 
+--
 
 - PMI is logarithm of the probability of finding two words together, normalized for the probability of finding each of the words alone
 
@@ -320,20 +335,28 @@ library(furrr)
 plan(multiprocess)  ## for parallel processing
 
 tidy_pmi <- nested_words %>%  
-  mutate(words = future_map(words, slide_windows, 4,
-                            .progress = TRUE)) %>%
+  mutate(words = future_map(words, slide_windows, 4)) %>%
   unnest(words) %>%
   unite(window_id, complaint_id, window_id) %>%
   pairwise_pmi(word, window_id)
+```
 
+---
+
+# Calculate PMI
+
+When PMI is high, the two words are associated with each other, likely to occur together.
+
+```{r}
 tidy_pmi
 ```
+
 
 ---
 
 # Time for word vectors! `r emo::ji("tada")`
 
-We can determine the word vectors from the PMI values using singular value decomposition.
+We determine word vectors using singular value decomposition.
 
 ```{r}
 tidy_word_vectors <- tidy_pmi %>%
@@ -349,18 +372,22 @@ tidy_word_vectors
 
 class: inverse, left, bottom
 
-background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
-background-size: cover
+## Each word can be represented as a numeric vector in this 
 
-## Each word can be represented as a numeric vector in this new, dense, 100-dimensional feature space. 
+- new,
+- dense, 
+- 100-dimensional 
+
+## feature space. 
+
 ---
 
-# Explore the CFPB word embeddings
+# Explore CFPB word embeddings
 
 Which words are close to each other in this new feature space of word embeddings?
 
 ```{r}
-nearest_synonyms <- function(df, token) {
+nearest_neighbors <- function(df, token) {
   df %>%
     widely(~ . %*% (.[token, ]), sort = TRUE, maximum_size = NULL)(item1, dimension, value) %>%
     select(-item2)
@@ -369,63 +396,59 @@ nearest_synonyms <- function(df, token) {
 
 ---
 
-# Explore the CFPB word embeddings
-
-Which words are close to each other in this new feature space of word embeddings?
+# Explore CFPB word embeddings
 
 ```{r}
 tidy_word_vectors %>%
-  nearest_synonyms("error")
+  nearest_neighbors("error")
 ```
 
 ---
 
-# Explore the CFPB word embeddings
-
-Which words are close to each other in this new feature space of word embeddings?
+# Explore CFPB word embeddings
 
 ```{r}
 tidy_word_vectors %>%
-  nearest_synonyms("month")
+  nearest_neighbors("month")
 ```
 
 ---
 
-# Explore the CFPB word embeddings
-
-Which words are close to each other in this new feature space of word embeddings?
+# Explore CFPB word embeddings
 
 ```{r}
 tidy_word_vectors %>%
-  nearest_synonyms("fee")
+  nearest_neighbors("fee")
 ```
 
 ---
+
+# Explore CFPB word embeddings
 
 ```{r eval=FALSE}
 tidy_word_vectors %>%
-  filter(dimension <= 24) %>%
+  filter(dimension <= 8) %>%
   group_by(dimension) %>%
   top_n(12, abs(value)) %>%
   ungroup %>%
   ggplot(aes(item1, value, fill = as.factor(dimension))) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~dimension, scales = "free_y", ncol = 6) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4) +
   coord_flip()
 ```
 
 ---
 
-```{r echo=FALSE, fig.height=3.9}
+```{r echo=FALSE, fig.height=4.2}
 tidy_word_vectors %>%
-  filter(dimension <= 24) %>%
+  dplyr::filter(dimension <= 8) %>%
   group_by(dimension) %>%
   top_n(12, abs(value)) %>%
   ungroup %>%
   mutate(item1 = reorder_within(item1, value, dimension)) %>%
   ggplot(aes(item1, value, fill = as.factor(dimension))) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~dimension, scales = "free_y", ncol = 6) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4) +
   scale_x_reordered() +
   coord_flip() +
   labs(x = NULL, y = "Value")
@@ -433,7 +456,25 @@ tidy_word_vectors %>%
 
 ---
 
-# How do we use these embeddings in modeling?
+```{r echo=FALSE, fig.height=4.2}
+tidy_word_vectors %>%
+  dplyr::filter(dimension > 8,
+                dimension <= 16) %>%
+  group_by(dimension) %>%
+  top_n(12, abs(value)) %>%
+  ungroup %>%
+  mutate(item1 = reorder_within(item1, value, dimension)) %>%
+  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4) +
+  scale_x_reordered() +
+  coord_flip() +
+  labs(x = NULL, y = "Value")
+```
+
+---
+
+# Embeddings in modeling
 
 The classic and simplest approach is to treat each document as a collection of words and summarize the word embeddings into **document embeddings**.
 
@@ -454,13 +495,11 @@ dim(doc_matrix)
 
 class: inverse, center, middle
 
-# `r emo::ji("sob")` WHAT IF YOUR DATASET IS TOO SMALL? `r emo::ji("weary")`
+### `r emo::ji("sob")` WHAT IF YOUR DATASET IS TOO SMALL? `r emo::ji("weary")`
 
 ---
 
 # Try pre-trained word embeddings
-
-You can still use word embeddings for feature creation in modeling, just not embeddings that you determine yourself from your own dataset.
 
 ```{r}
 library(textdata)
@@ -486,35 +525,30 @@ tidy_glove
 
 ---
 
-# Explore the GloVe word embeddings
-
-Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
+# Explore GloVe word embeddings
 
 ```{r}
 tidy_glove %>%
-  nearest_synonyms("error")
+  nearest_neighbors("error")
 ```
 
 ---
 
-# Explore the GloVe word embeddings
-
-Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
+# Explore GloVe word embeddings
 
 ```{r}
 tidy_glove %>%
-  nearest_synonyms("month")
+  nearest_neighbors("month")
 ```
 
 ---
 
-# Explore the GloVe word embeddings
+# Explore GloVe word embeddings
 
-Pre-trained word embeddings are trained on very large, general purpose English language datasets such as the text of Wikipedia plus other sources.
 
 ```{r}
 tidy_glove %>%
-  nearest_synonyms("fee")
+  nearest_neighbors("fee")
 ```
 
 ---
@@ -524,10 +558,11 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-## Pre-trained word embeddings...
+# Pre-trained word embeddings...
 
-- encode rich semantic relationships
-- can be less than ideal for specific tasks
+- .large[encode rich semantic relationships]
+
+- .large[can be less than ideal for specific tasks]
 
 ---
 
@@ -544,9 +579,6 @@ class: inverse
 - The GloVe embeddings do not contain all the tokens in the CPFB complaints, and vice versa
 
 ---
-
-# How do we use pre-trained embeddings in modeling?
-
 
 ```{r}
 word_matrix <- tidy_complaints %>%
@@ -574,7 +606,8 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-## Fairness and word embeddings 
+# Fairness and 
+# word embeddings 
 
 ---
 
@@ -602,16 +635,18 @@ class: inverse
 
 - Women's first names are more associated with family and men's first names are more associated with career
 
--- 
+--
 
 - Terms associated with women are more associated with the arts and terms associated with men are more associated with science
 
+
 .footnote[
-(Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.)[http://arxiv.org/abs/1608.07187]
+<a href="https://arxiv.org/abs/1608.07187" style="color: white">Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.</a>
 ]
 
 ---
 
+class: top, center
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Turkish is a gender neutral language. There is no &quot;he&quot; or &quot;she&quot; - everything is just &quot;o&quot;. But look what happens when Google translates to English. Thread: <a href="https://t.co/mIWjP4E6xw">pic.twitter.com/mIWjP4E6xw</a></p>&mdash; Alex Shams (@seyyedreza) <a href="https://twitter.com/seyyedreza/status/935291317252493312?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
 
@@ -619,10 +654,10 @@ class: inverse
 
 class: inverse, middle, center
 
-## Bias is so ingrained in word embeddings that it can be used to quantify change in social attitudes over time.
+## Bias is so ingrained in word embeddings that it can be used to quantify change in social attitudes over time
 
 .footnote[
-(Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.)[https://www.pnas.org/content/115/16/E3635]
+<a href="https://www.pnas.org/content/115/16/E3635" style="color: white">Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.</a>
 ]
 
 ---
@@ -643,45 +678,48 @@ class: inverse, middle, center
 
 
 .footnote[
-(Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.)[https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4]
+[Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.](https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4)
 ]
 
 ---
 
-# How do biased embeddings affect models?
+# Biased embeddings in models
 
-Consider a straightforward sentiment analysis model trained to predict how positive text is. Compare:
+Consider a straightforward sentiment analysis model trained to predict how positive text is. **Compare:**
 
 .pull-left[
-"Let's go get Italian food!"
-
-`r emo::ji("blush")`
+"Let's go get Italian food!" `r emo::ji("blush")`
 
 ]
 
 .pull-right[
-"Let's go get Mexican food!"
-
-`r emo::ji("confused")`
+"Let's go get Mexican food!" `r emo::ji("confused")`
 ]
 
+
+.footnote[
+[Speer, Robyn. "How to make a racist AI without really trying." ConceptNet blog (2017).](http://blog.conceptnet.io/posts/2017/how-to-make-a-racist-ai-without-really-trying/)
+]
 ---
 
-class: inverse, left
+class: inverse, left, top
 
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-## What are our options?
+# Consider some options
 
 --
 
-- Consider not using embeddings at all
+- .large[Find your own embeddings]
 
 --
 
-- Find your own embeddings
+- .large[Consider not using embeddings]
 
+--
+
+- .large[Can embeddings be debiased?]
 ---
 
 class: inverse
@@ -694,28 +732,30 @@ class: inverse
 
 --
 
-- Newer work involves the idea of augmenting the training data with counterfactuals
+- Training data can be augmented with counterfactuals
 
--- 
+--
 
-- Other researchers suggest that corrections for fairness happen at the point of **decision**
+- Other researchers suggest that fairness corrections occur at a decision
 
--- 
+--
 
-- Evidence indicates that methods for debiasing allow the stereotypes to seep back in
+- Evidence indicates that debiasing still allows stereotypes to seep back in
+
 
 .footnote[
-(Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).)[http://arxiv.org/abs/1903.03862]
+<a href="https://arxiv.org/abs/1903.03862" style="color: white">Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).</a>
 ]
 
 ---
 
-class: inverse, left
+class: inverse, left, bottom
 
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-## Word embeddings in the real world
+## Word embeddings in the
+# REAL WORLD
 
 ---
 
