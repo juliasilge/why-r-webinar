@@ -356,7 +356,15 @@ tidy_word_vectors <- tidy_pmi %>%
     item1, item2, pmi, 
     nv = 100, maxit = 1000
   )
+```
 
+---
+
+# Time for word vectors! `r emo::ji("tada")`
+
+We determine word vectors using singular value decomposition.
+
+```{r}
 tidy_word_vectors
 ```
 
@@ -366,9 +374,9 @@ class: inverse, left, bottom
 
 ## Each word can be represented as a numeric vector in this 
 
-- new,
-- dense, 
-- 100-dimensional 
+- .large[new,]
+- .large[dense,]
+- .large[100-dimensional] 
 
 ## feature space. 
 
@@ -443,7 +451,8 @@ tidy_word_vectors %>%
   facet_wrap(~dimension, scales = "free_y", ncol = 4) +
   scale_x_reordered() +
   coord_flip() +
-  labs(x = NULL, y = "Value")
+  theme(axis.text.x = element_blank()) +
+  labs(x = NULL, y = NULL)
 ```
 
 ---
@@ -461,7 +470,8 @@ tidy_word_vectors %>%
   facet_wrap(~dimension, scales = "free_y", ncol = 4) +
   scale_x_reordered() +
   coord_flip() +
-  labs(x = NULL, y = "Value")
+  theme(axis.text.x = element_blank()) +
+  labs(x = NULL, y = NULL)
 ```
 
 ---
@@ -497,6 +507,13 @@ class: inverse, center, middle
 library(textdata)
 
 glove6b <- embedding_glove6b(dimensions = 100)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+```{r}
 glove6b
 ```
 
@@ -511,7 +528,15 @@ tidy_glove <- glove6b %>%
   pivot_longer(contains("d"),
                names_to = "dimension") %>%
   rename(item1 = token)
+```
 
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+```{r}
 tidy_glove
 ```
 
@@ -647,7 +672,7 @@ class: top, center
 
 class: inverse, middle, center
 
-## Bias is so ingrained in word embeddings that it can be used to quantify change in social attitudes over time
+## Bias is so ingrained in word embeddings that they can be used to quantify change in social attitudes over time
 
 .footnote[
 <a href="https://www.pnas.org/content/115/16/E3635" style="color: white">Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.</a>

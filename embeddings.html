@@ -35,7 +35,7 @@ background-size: cover
 # Word 
 # Embeddings
 
-.large[Julia Silge | 12 March 2020]
+### Julia Silge | 12 March 2020
 
 ---
 
@@ -82,23 +82,24 @@ names(complaints)
 
 # Text as data
 
-Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
-
 
 ```r
 complaints %&gt;%
-  sample_n(7) %&gt;%
+  sample_n(10) %&gt;%
   pull(consumer_complaint_narrative)
 ```
 
 ```
-## [1] "Old National Bank advertised a {$200.00} promotional checking bonus offer online and in branch. I opened a checking account with them based on this offer and completed all of the listed terns and conditions of the offer but Old National Bank did not add the {$200.00} bonus to my account after I did so. I have attached copies of the details of the promotional offer that I received in branch and the business card of the banker that opened my account, screenshots of the same offer that were advertised on Old National Bank 's website ( this offer was subsequently extended until XX/XX/XXXX ), and copies of my monthly Old National Bank checking account statements for reference. \n\nA summary of the listed terms and conditions of the {$200.00} promotional checking bonus offer and how I fulfilled them are detailed below : 1. Open a new ONB Everyday, ONB Preferred, or ONB Classic checking account. \n\nI opened a new ONB Everyday checking account. \n\n2. Open the new account by visiting a branch located in XXXX, IN, XXXX, MI, XXXX, KY, the XXXX XXXX of XXXX, XXXX, XXXX XXXX, or XXXX, or in the XXXX XXXX of XXXX. \n\nI opened the new account in the XXXX, IN branch located at XXXX XXXX XXXX XXXX, Indiana, XXXX in XXXX XXXX XXXX. \n\n3. Open the new account by XX/XX/XXXX ( later extended to XX/XX/XXXX ). \n\nI opened the new account on XX/XX/XXXX. \n\n4. Open the new account with a minimum opening deposit of {$50.00}. \n\nI opened the new account with an opening deposit of {$50.00}. \n\n5. Offer is not available for Old National associates or clients with an existing Old National checking account or checking accounts closed in the past 6 months. \n\nI am not an Old National associate. I did have another Old National checking account that was closed on XX/XX/XXXX, which was more than 6 months before I opened the new account on XX/XX/XXXX. \n\n6. The {$200.00} bonus will be deposited into the new checking account after receiving automatic direct deposits totaling {$500.00} or more within 75 days of account opening. \n\nI received a direct deposit of {$510.00} from XXXX XXXX on XX/XX/XXXX. \n\n7. The {$200.00} bonus will be deposited into the new checking account after receiving 10 Old National debit card transactions of {$10.00} or more within 75 days of account opening. \n\nI made 10 purchases on my Old National debit card of {$10.00} each with XXXX between XX/XX/XXXX and XX/XX/XXXX. \n\n8. The account must be open and in good standing at the time the incentive is paid. \n\nMy account is open and in good standing. \n\n9. Limit one bonus per calendar year, one per account and one per individual. \n\nI received a bonus on XX/XX/XXXX on a different checking account. This {$200.00} promotional incentive bonus became payable when I completed all of the listed terms and conditions of the advertised offer on XX/XX/XXXX, which is in a new calendar year and on a new checking account and therefore valid. The terms stating that bonuses are limited to one per calendar year means that it is possible for an individual to receive a bonus each calendar year. If the bank had intended to mean that bonuses are limited to once per lifetime of an individual, they would not have included the phrase \" one ... per calendar year ''."
-## [2] "Per the attached letter, I have been contacting Equifax by mail, phone, and online to remove a consumer statement- to no avail. I even tried to have it change to no avail. I simply want the consumer statement removed."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-## [3] "As of XX/XX/2004 the company XXXX XXXX XXXX ( for XXXX University ) has been trying to collect this debt. I had asked for info, got the information. Since then they have signed me up saying i owe them for a course through their university. I have never received any books, test or even taken any course from their university. I have repeatedly sent letters to collection companies saying I do not owe this and have reported them to the credit bureau. This has been going on for 14 years and I am tired of this. It needs to stop."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-## [4] "The following accounts were opened up fraudulently and I'm demanding the immediate removal of these unauthorized and unknown accounts, please remove and block the following 1. XXXX   {$4700.00} 2. XXXX XXXX {$0.00} 3. XXXX XXXX {$560.00}"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-## [5] "This problem started with a XXXX timeshare purchased by my ex in 2005. He supposedly gave it to me as a gift so I was tricked into signing the contract. I subsequently found out it is a timeshare trick because his credit record was so bad he would n't qualify for a loan. As a result, XXXX put the whole thing under my name only without my knowledge. Because of XXXX I never got any documentation. XXXX apparently sent all correspondence to him. He vowed to bankrupt me and ruin my credit. Even though there is a court order stating he had to tell me if there was a XXXX issued he never did. This year a repo showed up on equifax from XXXX who apparently bought XXXX. They refused to acknowledge that. Ever received notice, and refused to honor the divorce decree showing it as a joint debt. After many calls I got the contract cancelled. However, They say I owe a balance and nothing went on his credit report. 1 ) is n't there any protection in XXXX situations? 2 XXXX how can you repo time? Does n't there have to be real property? 3 ) how can it show as a repo and a balance due on my credit report? Is n't it one or the other? 4 XXXX why is n't he being held responsible for the debt? \n\nThis is keeping me from getting any loans 8 years after it occurred. They strong armed me into paying {$1400.00} to clear the repo from my credit report and after I sent the check they said it does n't guarantee they will remove the repo. \n\nHelp me get free from my ex XXXX and XXXX!!!!"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-## [6] "Equifax was hacked and my information was compromised in the incident. I now have more reason to fear identity theft may be in the future."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-## [7] "I called XXXX XXXX XXXX to get service, i was told it would be a soft inquiry to get the service. Not only that, but I was signed up for the entirely wrong product, i have been calling XXXX XXXX XXXX and no one can find my account number to offer me any help. After calling over 25 times, stepping in to a brick and mortar store they did let me know that i was NOT signed up for the service i requested, instead the CSR i dealt with that night signed me up for whatever he wanted to sign me up for. They have told me since to refuse the package that was sent to my property which i have already done. The XXXX router which apparently that CSR signed me up for apparently is still activated which the brick and mortar XXXX XXXX XXXX store told me and they have no idea why it's still activated but it should have been already canceled. No one has been able to help me regarding the 2 inquiries i now have on my Equifax report from XXXX and XXXX XXXX XXXX even after i was signed up for the wrong product, and returned whatever product they sent in the package. I don't have any luck getting anyone to help me with this on the phone or inside a store. They did not spell my name correctly on the paperwork, let alone my email. They have supplied me with a link to put in my information for wrong inquiries placed on reports but it has been weeks with no answer, i need help on getting this resolved from the corresponding forces."
+##  [1] "First of all, your categories did not cover my complaint. So it is actually none of the above I just chose ANYTHING to get to the next page. You guys need a category that is called customer service complaint. There is no way to talk to a real person at Experian despite the seven different phone numbers that they ostensibly provide to '' contact customer service '' it doesn't matter what you do you are dragged to the same rat Maze and given only two measly choices one is putting a fraud alert on and one is ordering your car there are no options to talk to an agent AT ALL!! Experian has something on my credit report about me that says my social security number was used with an old address of mine and when I read who the inquiry was it was something I did not understand and that I needed Experian to translate since the title of the inquiry was some initial, XXXX a couple of other words, and then the word experian ... despite two hours of searching on the internet and everything I could find the same 800 numbers for Experian from their website telling me to reach out to them through XXXX or XXXX or some other kind of nonsense. They need an 800 number that actually works, that one of the options is to talk to an agent. That they have so much of my personal information and they're getting paid to do a job and with no way of anyone to actually speak to them."                                                                                                                                                                                                                                                                                                                     
+##  [2] "On XX/XX/XXXX I had a fraud alert added to my personal credit report it was due to fall off/ be removed on XX/XX/XXXX. I contacted the XXXX XXXX  to apply for a credit card and was told that the fraud alert was still there. I tried to reach out to customer service and cooperate and all I kept getting is the run-around there was no real person I could talk to"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+##  [3] "*****NEW EVIDENCE FROM XXXX XXXX CEO XXXX XXXX ... .. HE WAS THE ORIGINAL MORTGAGE BROKER ... HE CONFIRMED HE SUBMITTED PROPER ESCROW AMOUNTS TO XXXX XXXX ... AND XXXX XXXX COMITTED LOAN ORIGINATION FRAUD IN DIRECT VIOLATION OF THE TRUTH IN LENDING ACT BY CHANGING THE AMOUNTS THEY MADE THE PAYMENT APPEAR LOWER TO THE BORROWER ... AND THEY DECIEVED THE ELDERLY XXXX YEAR OLD VICTIMS**** ***XXXX XXXX AND NATIONSTAR ( WHO XXXX XXXX SOLD THIS LOAN TO ) HAVE BEEN ACTIVELY CONSPIRING TO DEFRAUD THE U.S. GOV ... MORTGAGE INSURANCE ... AND CONSUMERS IN DIRECT VIOLATION OF COUNTLESS LAWS*** NATIONSTAR IS FULLY AWARE OF THIS LOAN ORIGINATION FRAUD AND THE LATER ESCROW FRAUD AND HAS BEEN FOR SEVERAL YEARS AS WE SOUGHT CIVIL RESOLUTION WITH A BASIC REQUEST TO HONOR OUR RIGHTS*** XXXX XXXX COACHED XXXX XXXX TO CONSPIRE AND ENABLE THIS FRAUD WHILE HE WAS EMPLOYED AT NATIONSTAR ( XXXX XXXX   NOW WORKS FOR XXXX  AS A VICE PRESIDENT ... ALSO FOR A COMPANY CALLED XXXX XXXX ACCORDING TO HIS VOICEMAIL ) ***WE ARE MOVING FORWARD IN A COURT OF LAW ON THE CIVIL SIDE BUT I ALSO WANT TO SEE CRIMINAL PROSECUTION AND FINES FOR A CORPORATE CULTURE THAT FEELS IT IS ABOVE THE LAW***YOU HAVE LOAN FRAUD, ESCROW FRAUD, WIRE FRAUD, THEFT OF PRINCIPAL WITHOUT PROPER CREDIT, MAIL FRAUD, CONSPIRACY TO DEFRAUD U.S. GOVERNMENT ( BY STEALING HOMES AND LLEGALLY COLLECTING FEDERALLY BACKED INSURANCE PAYMENTS ) ALL PROVEN AND I HAVE THE EVIDENCE TO SUPPORT IT IN ANY COURTROOM*** I want the CFPB to publish this description on consumerfinance.gov so that others can learn from my experience."                                                                                                               
+##  [4] "The following accounts are reporting to my credit report in error. They must be removed immediately as they are the result of identity theft. I already filed a complaint with the FTC and local authorities.\n\n1 ) XXXX XXXX XXXX for {$490.00} opened XX/XX/XXXX 2 ) XXXX   for {$4600.00} opened XX/XX/XXXX 3 )  XXXX XXXX XXXX for {$490.00} opened XX/XX/XXXX 4 ) XXXX XXXX for {$100.00} opened XX/XX/XXXX 5 ) XXXX XXXX XXXX  with {$0.00} Balance Opened XX/XX/XXXX 6 ) XXXX XXXX for {$520.00} Opened XX/XX/XXXX 7 ) XXXX XXXX XXXX for {$100.00} Opened XX/XX/XXXX"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+##  [5] "I have 29 hard inquiries on my report by dealership that I. Didnt consent too and I spoke to a credit adviser that I can get all or some of them off the dates are XX/XX/XXXX and XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX XX/XX/XXXX those are multiple inquiries on my credit report that I didnt consent too and would like to remove them please thanks"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+##  [6] "On XX/XX/2019 I purchased an XXXX XXXX 2 business class ticket for {$5200.00} charging my Chase XXXX XXXX  credit card. Within few minutes I got an email asking me to confirm that this is not a fraud and I indeed made the purchase. I confirmed the purchase to Chase. On XX/XX/2019 I went to XXXX web to make seat selection. I was surprised to find that the reservation was no longer valid. I purchased new tickets using the same card but the same 2 business class tickets were more expensive and cost {$7300.00}. This time the purchase was completed and I did not get any email to confirm that this was not a fraud. Today I called Chase XXXX  and complained. I was transferred among several customer service and ended up with fraud protection who confirmed that they got my initial approval but declined payment with no explanation. ( Credit line was available and only 10 % of available line was charged with {$0.00} balance for previous month due ). As a result of the Chase XXXX XXXX mistake, I am paying additional {$2000.00}. I asked for refund and was put on hold ( with music ) with no one picking up the line."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+##  [7] "I have a credit card with XXXX  XXXX. I have always made my payments on time. For some reason, I realized that there was a late payment on my credit report, I called XXXX XXXX and they said their system automatically put me on paperless billing, which I did not request. I was awaiting letter in the mail all this time just to find out their system had an error. As you can see, I have always had a stellar payment record. I tried contacting XXXX, Equifax, XXXX, and XXXX XXXX with no successful resolution. XXXX, XXXX, and Equifax only reporting me 120 days late payments. There was an error on their part. I was never 120 days late."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+##  [8] "On XX/XX/XXXX, I created an account on www.equifax.com/fcra to manage my credit freeze. I tried to do a password reset. That's how I discovered a bug in the password reset process. The reset link doesn't reference a page which allows you to enter a new password : instead, it references a page which asks for your email address and password. \n\nI called customer support for a credit freeze 8 times over 4 days. I used both of these numbers : XXXX or XXXX. My request for help was never escalated to someone who DID, IN FACT, reset my password. \n\nReps would tell me that they could only reset my password if I volunteered the following data over the phone. Name, full social, birthdate, phone numbers, home address, mortgage provider, monthly payment, credit card provider, total balance due or monthly payment, employment data, etc. This struck me as coercive. I answered several questions to verify my identity, then pointed out that the reps COULD CONFIRM that I had already created an account on www.equifax.com/fcra. I wouldnt be able to create an account unless I'd ALREADY answered those questions. SO WHY WERE THEY IMPLYING THAT THEY COULD ONLY RESET THE ACCOUNT IF I ANSWERED THOSE QUESTIONS USING A PHONE LINE WHICH MIGHT BE INSECURE? None of the reps I spoke with answered this question. \n\nNOTE In XX/XX/XXXX, I had used a phone-based system to place a credit freeze with Equifax. I got a pin, but never received paperwork from Equifax confirming that the freeze was in place - and that it had never been lifted without my permission. All of the other credit bureaus with which I placed a credit freeze provided confirmation of the freeze IN WRITING. except EQUIFAX."
+##  [9] "The Credit Card company increased my Credit Line without my knowledge. They sent a message after the fact which also stated that I could have my limit returned to the original if I called the company. When I called, I was informed that reducing my credit limit would adversely affect my credit score. I was placed on hold for 17 minutes before I hung up and called back and spoke to \" XXXX in XXXX ''. She informed me that there is a clause in my agreement that allows them to increase my credit limit. It is a feature that I could turn off ; which I did. However, I did not reduce my limit to avoid the penalty to my credit score.I was then turned over to a supervisor who quoted the policy a number of times. \n\nI simply would have liked a notification prior to the increase so I could make a decision about my own finances. This is a form of fraud to me because they increase their value through our fractional lending system without actually having the money to back up what could negatively affect my credit. According to my financial adviser, I need at least two credit cards to increase my credit score. This increase can have negative consequences in my getting approved for that second card."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## [10] "Received an email from Synchrony financial about an Amazon credit builder card application that i did not apply for. Amazon claims it was an error sent to all accounts but i only received this email on my secondary email account and not the account actually attached to my amazon account. I can not find a working phone number to Synchrony, Ive called 5 different phone numbers and when i get put on hold for an agent it tells me it can not complete the call and hangs up. I just want to ensure it IS a glitch and not someone stealing my information."
 ```
 
 ---
@@ -122,24 +123,24 @@ complaints %&gt;%
 ```
 
 ```
-## Document-feature matrix of: 500,658 documents, 125,186 features (100.0% sparse).
+## Document-feature matrix of: 134,423 documents, 49,778 features (99.9% sparse).
 ##          features
-## docs         acknowledg     actual       addit     balanc     bureau       case    compani   complaint
-##   1290155 NA 0.04418805 0.03477452 0.030261114 0.02217244 0.04520857 0.02941591 0.01419504 0.023488768
-##   1290157  0 0          0          0           0          0          0          0          0          
-##   1290181  0 0          0          0           0          0          0          0          0          
-##   1290198  0 0          0          0.007275896 0.03198648 0          0          0          0.005647573
-##   1290200 NA 0.03381346 0          0           0          0          0          0.01086229 0          
-##   1290238  0 0          0          0           0          0          0          0          0          
+## docs             account       auto       bank        call      charg      chase         dai        date
+##   3113204 NA 0.007959449 0.09826659 0.04702513 0.015348248 0.02477143 0.05147568 0.058697715 0.024545160
+##   3113208  0 0.001200495 0          0.02127790 0.006944765 0.01868093 0          0           0.003702059
+##   3113804  0 0           0          0          0           0          0          0.007053388 0.008848379
+##   3113805  0 0.003074285 0          0          0           0          0          0           0          
+##   3113807  0 0.034178812 0          0          0           0.05318571 0          0           0          
+##   3113808  0 0           0          0          0           0          0          0           0          
 ##          features
-## docs         confirm
-##   1290155 0.06119605
-##   1290157 0         
-##   1290181 0         
-##   1290198 0         
-##   1290200 0         
-##   1290238 0         
-## [ reached max_ndoc ... 500,652 more documents, reached max_nfeat ... 125,176 more features ]
+## docs           dollar
+##   3113204 0.046369665
+##   3113208 0.006993772
+##   3113804 0          
+##   3113805 0          
+##   3113807 0          
+##   3113808 0          
+## [ reached max_ndoc ... 134,417 more documents, reached max_nfeat ... 49,768 more features ]
 ```
 
 
@@ -152,9 +153,9 @@ background-size: cover
 
 # This representation...
 
-- is incredibly sparse
-- of high dimensionality
-- with a huge number of features
+- .large[is incredibly sparse]
+- .large[of high dimensionality]
+- .large[with a huge number of features]
 
 ---
 
@@ -194,7 +195,7 @@ class: inverse
 
 --
 
-- language models with transformers like ULMFiT
+- language models with transformers like ULMFiT and ELMo
 
 ---
 
@@ -203,10 +204,575 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
-# We can determind word embedding using...
+# We can determine word embeddings using...
 
-- word counts
-- matrix factorization
+- .large[word counts]
+- .large[matrix factorization]
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```r
+tidy_complaints &lt;- complaints %&gt;%
+  select(complaint_id, consumer_complaint_narrative) %&gt;%
+  unnest_tokens(word, consumer_complaint_narrative) %&gt;%
+  group_by(word) %&gt;%
+  filter(n() &gt;= 50) %&gt;%
+  ungroup()
+
+tidy_complaints
+```
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```
+## # A tibble: 25,464,844 x 2
+##    complaint_id word      
+##           &lt;dbl&gt; &lt;chr&gt;     
+##  1      3384392 transworld
+##  2      3384392 systems   
+##  3      3384392 inc       
+##  4      3384392 is        
+##  5      3384392 trying    
+##  6      3384392 to        
+##  7      3384392 collect   
+##  8      3384392 a         
+##  9      3384392 debt      
+## 10      3384392 that      
+## # … with 25,464,834 more rows
+```
+
+---
+
+# Counting words
+
+Next, we can create nested dataframes.
+
+
+```r
+nested_words &lt;- tidy_complaints %&gt;%
+  nest(words = c(word))
+
+nested_words
+```
+
+```
+## # A tibble: 134,379 x 2
+##    complaint_id words             
+##           &lt;dbl&gt; &lt;list&gt;            
+##  1      3384392 &lt;tibble [18 × 1]&gt; 
+##  2      3417821 &lt;tibble [71 × 1]&gt; 
+##  3      3433198 &lt;tibble [77 × 1]&gt; 
+##  4      3366475 &lt;tibble [69 × 1]&gt; 
+##  5      3385399 &lt;tibble [213 × 1]&gt;
+##  6      3313223 &lt;tibble [220 × 1]&gt;
+##  7      3446975 &lt;tibble [22 × 1]&gt; 
+##  8      3214857 &lt;tibble [64 × 1]&gt; 
+##  9      3417374 &lt;tibble [44 × 1]&gt; 
+## 10      3444592 &lt;tibble [19 × 1]&gt; 
+## # … with 134,369 more rows
+```
+
+---
+
+# Time to SLIDE ⚡
+
+Let's identify **windows** in order to calculate the skipgram probabilities.
+
+
+```r
+slide_windows &lt;- function(tbl, window_size) {
+  
+  skipgrams &lt;- slider::slide(tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE)
+  
+  safe_mutate &lt;- safely(mutate)
+  
+  out &lt;- map2(skipgrams, 1:length(skipgrams), ~ safe_mutate(.x, window_id = .y))
+  
+  out %&gt;%
+    transpose() %&gt;% 
+    pluck("result") %&gt;% 
+    compact() %&gt;%
+    bind_rows()
+}
+```
+
+---
+
+class: inverse
+
+# Window size? 🤔
+
+--
+
+- Determines semantic meaning the embeddings capture
+
+--
+
+- Smaller window size (3-4) focuses on how the word is used and learns what other words are functionally similar
+
+--
+
+- Larger window size (~10) captures the domain or topic of each word
+
+---
+
+class: inverse
+
+# Point-wise mutual information
+
+--
+
+- How often do words occur on their own?
+
+--
+
+- How often words occur together with other words?
+
+--
+
+- PMI is a measure of association to compute this
+
+--
+
+- PMI is logarithm of the probability of finding two words together, normalized for the probability of finding each of the words alone
+
+
+
+---
+
+# Calculate PMI
+
+We use PMI to measure which words occur together more often than expected based on how often they occurred on their own.
+
+
+```r
+library(widyr)
+library(furrr)
+
+plan(multiprocess)  ## for parallel processing
+
+tidy_pmi &lt;- nested_words %&gt;%  
+  mutate(words = future_map(words, slide_windows, 4)) %&gt;%
+  unnest(words) %&gt;%
+  unite(window_id, complaint_id, window_id) %&gt;%
+  pairwise_pmi(word, window_id)
+```
+
+---
+
+# Calculate PMI
+
+When PMI is high, the two words are associated with each other, likely to occur together.
+
+
+```r
+tidy_pmi
+```
+
+```
+## # A tibble: 5,241,008 x 3
+##    item1   item2          pmi
+##    &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;
+##  1 systems transworld  7.03  
+##  2 inc     transworld  5.87  
+##  3 is      transworld  0.0686
+##  4 trying  transworld  0.737 
+##  5 to      transworld -0.0758
+##  6 collect transworld  1.04  
+##  7 a       transworld -0.618 
+##  8 debt    transworld  0.862 
+##  9 that    transworld -0.514 
+## 10 not     transworld -1.43  
+## # … with 5,240,998 more rows
+```
+
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors &lt;- tidy_pmi %&gt;%
+  widely_svd(
+    item1, item2, pmi, 
+    nv = 100, maxit = 1000
+  )
+```
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors
+```
+
+```
+## # A tibble: 787,700 x 3
+##    item1   dimension   value
+##    &lt;chr&gt;       &lt;int&gt;   &lt;dbl&gt;
+##  1 systems         1 0.0169 
+##  2 inc             1 0.0195 
+##  3 is              1 0.0196 
+##  4 trying          1 0.0415 
+##  5 to              1 0.00881
+##  6 collect         1 0.0372 
+##  7 a               1 0.0124 
+##  8 debt            1 0.0419 
+##  9 that            1 0.0133 
+## 10 not             1 0.0210 
+## # … with 787,690 more rows
+```
+
+---
+
+class: inverse, left, bottom
+
+## Each word can be represented as a numeric vector in this 
+
+- .large[new,]
+- .large[dense,]
+- .large[100-dimensional] 
+
+## feature space. 
+
+---
+
+# Explore CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+
+```r
+nearest_neighbors &lt;- function(df, token) {
+  df %&gt;%
+    widely(~ . %*% (.[token, ]), sort = TRUE, maximum_size = NULL)(item1, dimension, value) %&gt;%
+    select(-item2)
+}
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 7,877 x 2
+##    item1      value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 error     0.0403
+##  2 issue     0.0295
+##  3 problem   0.0273
+##  4 issues    0.0222
+##  5 mistake   0.0203
+##  6 errors    0.0200
+##  7 system    0.0195
+##  8 problems  0.0175
+##  9 situation 0.0156
+## 10 not       0.0141
+## # … with 7,867 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 7,877 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 month    0.0594
+##  2 payment  0.0380
+##  3 months   0.0356
+##  4 days     0.0323
+##  5 payments 0.0313
+##  6 year     0.0307
+##  7 xx       0.0271
+##  8 balance  0.0270
+##  9 paid     0.0267
+## 10 pay      0.0266
+## # … with 7,867 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 7,877 x 2
+##    item1      value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 fee       0.0712
+##  2 fees      0.0580
+##  3 charge    0.0421
+##  4 charged   0.0385
+##  5 interest  0.0367
+##  6 late      0.0342
+##  7 charges   0.0335
+##  8 overdraft 0.0317
+##  9 charging  0.0243
+## 10 of        0.0231
+## # … with 7,867 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  filter(dimension &lt;= 8) %&gt;%
+  group_by(dimension) %&gt;%
+  top_n(12, abs(value)) %&gt;%
+  ungroup %&gt;%
+  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4) +
+  coord_flip()
+```
+
+---
+
+![](embeddings_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+
+---
+
+![](embeddings_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+---
+
+# Embeddings in modeling
+
+The classic and simplest approach is to treat each document as a collection of words and summarize the word embeddings into **document embeddings**.
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;% 
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+embedding_matrix &lt;- tidy_word_vectors %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% embedding_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 134379    100
+```
+
+---
+
+class: inverse, center, middle
+
+### 😭 WHAT IF YOUR DATASET IS TOO SMALL? 😩
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+library(textdata)
+
+glove6b &lt;- embedding_glove6b(dimensions = 100)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+glove6b
+```
+
+```
+## # A tibble: 400,000 x 101
+##    token      d1      d2      d3      d4      d5      d6      d7      d8      d9     d10     d11      d12     d13
+##    &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+##  1 "the" -0.0382 -0.245   0.728  -0.400   0.0832  0.0440 -0.391   0.334  -0.575   0.0875  0.288  -0.0673   0.309 
+##  2 ","   -0.108   0.111   0.598  -0.544   0.674   0.107   0.0389  0.355   0.0635 -0.0942  0.158  -0.817    0.142 
+##  3 "."   -0.340   0.209   0.463  -0.648  -0.384   0.0380  0.171   0.160   0.466  -0.0192  0.415  -0.343    0.269 
+##  4 "of"  -0.153  -0.243   0.898   0.170   0.535   0.488  -0.588  -0.180  -1.36    0.425   0.154   0.242    0.135 
+##  5 "to"  -0.190   0.0500  0.191  -0.0492 -0.0897  0.210  -0.550   0.0984 -0.201   0.342  -0.0927  0.161   -0.133 
+##  6 "and" -0.0720  0.231   0.0237 -0.506   0.339   0.196  -0.329   0.184  -0.181   0.290   0.204  -0.550    0.274 
+##  7 "in"   0.0857 -0.222   0.166   0.134   0.382   0.354   0.0129  0.225  -0.438   0.502  -0.359  -0.350    0.0552
+##  8 "a"   -0.271   0.0440 -0.0203 -0.174   0.644   0.712   0.355   0.471  -0.296   0.544  -0.723  -0.00476  0.0406
+##  9 "\""  -0.305  -0.236   0.176  -0.729  -0.283  -0.256   0.266   0.0253 -0.0748 -0.377  -0.0578  0.122    0.344 
+## 10 "'s"   0.589  -0.202   0.735  -0.683  -0.197  -0.180  -0.392   0.342  -0.606   0.638  -0.267   0.365   -0.404 
+## # … with 399,990 more rows, and 87 more variables: d14 &lt;dbl&gt;, d15 &lt;dbl&gt;, d16 &lt;dbl&gt;, d17 &lt;dbl&gt;, d18 &lt;dbl&gt;,
+## #   d19 &lt;dbl&gt;, d20 &lt;dbl&gt;, d21 &lt;dbl&gt;, d22 &lt;dbl&gt;, d23 &lt;dbl&gt;, d24 &lt;dbl&gt;, d25 &lt;dbl&gt;, d26 &lt;dbl&gt;, d27 &lt;dbl&gt;,
+## #   d28 &lt;dbl&gt;, d29 &lt;dbl&gt;, d30 &lt;dbl&gt;, d31 &lt;dbl&gt;, d32 &lt;dbl&gt;, d33 &lt;dbl&gt;, d34 &lt;dbl&gt;, d35 &lt;dbl&gt;, d36 &lt;dbl&gt;,
+## #   d37 &lt;dbl&gt;, d38 &lt;dbl&gt;, d39 &lt;dbl&gt;, d40 &lt;dbl&gt;, d41 &lt;dbl&gt;, d42 &lt;dbl&gt;, d43 &lt;dbl&gt;, d44 &lt;dbl&gt;, d45 &lt;dbl&gt;,
+## #   d46 &lt;dbl&gt;, d47 &lt;dbl&gt;, d48 &lt;dbl&gt;, d49 &lt;dbl&gt;, d50 &lt;dbl&gt;, d51 &lt;dbl&gt;, d52 &lt;dbl&gt;, d53 &lt;dbl&gt;, d54 &lt;dbl&gt;,
+## #   d55 &lt;dbl&gt;, d56 &lt;dbl&gt;, d57 &lt;dbl&gt;, d58 &lt;dbl&gt;, d59 &lt;dbl&gt;, d60 &lt;dbl&gt;, d61 &lt;dbl&gt;, d62 &lt;dbl&gt;, d63 &lt;dbl&gt;,
+## #   d64 &lt;dbl&gt;, d65 &lt;dbl&gt;, d66 &lt;dbl&gt;, d67 &lt;dbl&gt;, d68 &lt;dbl&gt;, d69 &lt;dbl&gt;, d70 &lt;dbl&gt;, d71 &lt;dbl&gt;, d72 &lt;dbl&gt;,
+## #   d73 &lt;dbl&gt;, d74 &lt;dbl&gt;, d75 &lt;dbl&gt;, d76 &lt;dbl&gt;, d77 &lt;dbl&gt;, d78 &lt;dbl&gt;, d79 &lt;dbl&gt;, d80 &lt;dbl&gt;, d81 &lt;dbl&gt;,
+## #   d82 &lt;dbl&gt;, d83 &lt;dbl&gt;, d84 &lt;dbl&gt;, d85 &lt;dbl&gt;, d86 &lt;dbl&gt;, d87 &lt;dbl&gt;, d88 &lt;dbl&gt;, d89 &lt;dbl&gt;, d90 &lt;dbl&gt;,
+## #   d91 &lt;dbl&gt;, d92 &lt;dbl&gt;, d93 &lt;dbl&gt;, d94 &lt;dbl&gt;, d95 &lt;dbl&gt;, d96 &lt;dbl&gt;, d97 &lt;dbl&gt;, d98 &lt;dbl&gt;, d99 &lt;dbl&gt;,
+## #   d100 &lt;dbl&gt;
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```r
+tidy_glove &lt;- glove6b %&gt;%
+  pivot_longer(contains("d"),
+               names_to = "dimension") %&gt;%
+  rename(item1 = token)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```r
+tidy_glove
+```
+
+```
+## # A tibble: 40,000,000 x 3
+##    item1 dimension   value
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 the   d1        -0.0382
+##  2 the   d2        -0.245 
+##  3 the   d3         0.728 
+##  4 the   d4        -0.400 
+##  5 the   d5         0.0832
+##  6 the   d6         0.0440
+##  7 the   d7        -0.391 
+##  8 the   d8         0.334 
+##  9 the   d9        -0.575 
+## 10 the   d10        0.0875
+## # … with 39,999,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1       value
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 error        34.6
+##  2 errors       28.1
+##  3 data         19.8
+##  4 inning       19.4
+##  5 game         19.3
+##  6 percentage   19.3
+##  7 probability  19.2
+##  8 unforced     19.1
+##  9 fault        19.1
+## 10 point        19.0
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 month      32.4
+##  2 year       31.2
+##  3 last       30.6
+##  4 week       30.5
+##  5 wednesday  29.6
+##  6 tuesday    29.5
+##  7 monday     29.3
+##  8 thursday   29.1
+##  9 percent    28.9
+## 10 friday     28.9
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1        value
+##    &lt;chr&gt;        &lt;dbl&gt;
+##  1 fee           39.8
+##  2 fees          30.7
+##  3 pay           26.6
+##  4 $             26.4
+##  5 salary        25.9
+##  6 payment       25.9
+##  7 £             25.4
+##  8 tax           24.9
+##  9 payments      23.8
+## 10 subscription  23.1
+## # … with 399,990 more rows
+```
 
 ---
 
@@ -215,6 +781,217 @@ class: inverse, left, bottom
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
 
+## Pre-trained word embeddings...
+
+- encode rich semantic relationships
+
+- can be less than ideal for specific tasks
+
+---
+
+class: inverse
+
+# How can we integrate pre-trained word embeddings in modeling?
+
+--
+
+- Again, we can create simple document embeddings by summarizing
+
+--
+
+- The GloVe embeddings do not contain all the tokens in the CPFB complaints, and vice versa
+
+---
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;%
+  inner_join(tidy_glove %&gt;%
+               distinct(item1) %&gt;%
+               rename(word = item1)) %&gt;%
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+glove_matrix &lt;- tidy_glove %&gt;%
+  inner_join(tidy_complaints %&gt;% 
+               distinct(word) %&gt;%
+               rename(item1 = word)) %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% glove_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 134372    100
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Fairness and 
+# Word 
+# Embeddings 
+
+---
+
+# Fairness and word embeddings 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- Human prejudice or bias in the corpus becomes imprinted into the embeddings
+
+---
+
+class: inverse
+
+# Fairness and word embeddings 
+
+--
+
+- African American first names are associated with more unpleasant feelings than European American first names
+
+--
+
+- Women's first names are more associated with family and men's first names are more associated with career
+
+--
+
+- Terms associated with women are more associated with the arts and terms associated with men are more associated with science
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1608.07187" style="color: white"&gt;Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.&lt;/a&gt;
+]
+
+---
+
+class: top, center
+
+&lt;blockquote class="twitter-tweet"&gt;&lt;p lang="en" dir="ltr"&gt;Turkish is a gender neutral language. There is no &amp;quot;he&amp;quot; or &amp;quot;she&amp;quot; - everything is just &amp;quot;o&amp;quot;. But look what happens when Google translates to English. Thread: &lt;a href="https://t.co/mIWjP4E6xw"&gt;pic.twitter.com/mIWjP4E6xw&lt;/a&gt;&lt;/p&gt;&amp;mdash; Alex Shams (@seyyedreza) &lt;a href="https://twitter.com/seyyedreza/status/935291317252493312?ref_src=twsrc%5Etfw"&gt;November 27, 2017&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src="https://platform.twitter.com/widgets.js" charset="utf-8"&gt;&lt;/script&gt; 
+
+---
+
+class: inverse, middle, center
+
+## Bias is so ingrained in word embeddings that they can be used to quantify change in social attitudes over time
+
+.footnote[
+&lt;a href="https://www.pnas.org/content/115/16/E3635" style="color: white"&gt;Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.&lt;/a&gt;
+]
+
+---
+
+# Biased training data 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- For example, consider the case of Wikipedia
+
+--
+
+- Wikipedia both reflects social/historical biases **and** generates bias
+
+
+.footnote[
+[Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.](https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4)
+]
+
+---
+
+# Biased embeddings in models
+
+Consider a straightforward sentiment analysis model trained to predict how positive text is. **Compare:**
+
+.pull-left[
+"Let's go get Italian food!" 😊
+
+]
+
+.pull-right[
+"Let's go get Mexican food!" 😕
+]
+
+
+.footnote[
+[Speer, Robyn. "How to make a racist AI without really trying." ConceptNet blog (2017).](http://blog.conceptnet.io/posts/2017/how-to-make-a-racist-ai-without-really-trying/)
+]
+---
+
+class: inverse, left, top
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Consider some options
+
+--
+
+- .large[Find your own embeddings]
+
+--
+
+- .large[Consider not using embeddings]
+
+--
+
+- .large[Can embeddings be debiased?]
+---
+
+class: inverse
+
+# Can embeddings be debiased?
+
+--
+
+- Embeddings can be reprojected to mitigate a specific bias (such as gender bias) using specific sets of words
+
+--
+
+- Training data can be augmented with counterfactuals
+
+--
+
+- Other researchers suggest that fairness corrections occur at a decision
+
+--
+
+- Evidence indicates that debiasing still allows stereotypes to seep back in
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1903.03862" style="color: white"&gt;Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).&lt;/a&gt;
+]
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Word embeddings in the
+# REAL WORLD
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
 
 # Thanks!
 
@@ -230,6 +1007,7 @@ Photo by &lt;a href="https://unsplash.com/@patrickian4?utm_source=unsplash&amp;u
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
