@@ -664,9 +664,9 @@ class: inverse
 
 ---
 
-class: top, center
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Turkish is a gender neutral language. There is no &quot;he&quot; or &quot;she&quot; - everything is just &quot;o&quot;. But look what happens when Google translates to English. Thread: <a href="https://t.co/mIWjP4E6xw">pic.twitter.com/mIWjP4E6xw</a></p>&mdash; Alex Shams (@seyyedreza) <a href="https://twitter.com/seyyedreza/status/935291317252493312?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+```{r echo=FALSE, fig.align="center"}
+knitr::include_graphics("figs/turkish.png")
+```
 
 ---
 
