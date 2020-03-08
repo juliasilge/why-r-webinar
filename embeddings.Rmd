@@ -192,7 +192,7 @@ class: inverse
 
 ---
 
-class: inverse, left, bottom
+class: inverse, left, top
 
 background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
 background-size: cover
@@ -201,6 +201,10 @@ background-size: cover
 
 - .large[word counts]
 - .large[matrix factorization]
+
+.footnote[
+<a href="https://multithreaded.stitchfix.com/blog/2017/10/18/stop-using-word2vec/" style="color: white">Moody, Chris. "Stop using word2vec." MultiThreaded blog (2017).</a>
+]
 
 ---
 
