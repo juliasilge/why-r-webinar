@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Understanding Word Embeddings</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Julia Silge" />
+    <meta name="date" content="2020-06-04" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <meta name="description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="generator" content="xaringan and remark.js"/>
+    <meta name="twitter:title" content="Understanding Word Embeddings"/>
+    <meta name="twitter:description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="twitter:url" content="https://juliasilge.github.io/why-r-webinar/"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="og:title" content="Understanding Word Embeddings"/>
+    <meta name="og:description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="og:url" content="https://juliasilge.github.io/why-r-webinar/"/>
+    <meta name="og:type" content="website"/>
+    <meta name="og:locale" content="en_US"/>
+    <script src="https://use.fontawesome.com/5235085b15.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="css/footer_plus.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;span&gt;juliasilge.github.io/why-r-webinar/&lt;/span&gt;&lt;/div&gt; 
+
+---
+
+class: inverse, left, middle
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Understanding 
+# Word 
+# Embeddings
+
+### Julia Silge | 4 June 2020
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Find me at...
+
+&lt;a href="http://twitter.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="http://github.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://juliasilge.com" style="color: white;"&gt;&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;&amp;nbsp; juliasilge.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://tidytextmining.com" style="color: white;"&gt;&lt;i class="fa fa-book fa-fw"&gt;&lt;/i&gt;&amp;nbsp; tidytextmining.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="mailto:julia.silge@gmail.com" style="color: white;"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; julia.silge@gmail.com&lt;/a&gt;
+
+---
+
+class: inverse, center, middle
+
+# 📑 TEXT AS DATA 📊
+
+---
+
+# Text as data
+
+Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
+
+
+```r
+library(tidyverse)
+
+complaints &lt;- read_csv("complaints.csv.gz") %&gt;%
+  sample_frac(0.01)
+names(complaints)
+```
+
+```
+## [1] "complaint_id"                 "date_received"               
+## [3] "product"                      "issue"                       
+## [5] "company"                      "state"                       
+## [7] "consumer_complaint_narrative"
+```
+
+---
+
+# Text as data
+
+
+```r
+complaints %&gt;%
+  sample_n(10) %&gt;%
+  pull(consumer_complaint_narrative)
+```
+
+```
+##  [1] "Flagstar bank mistakenly paid the real estate taxes on my property even though the loan agreement clearly states that I would pay the taxes and that there was no escrow requirement for taxes or any other expense. \nI paid the real estate taxes on time. \nFlagstar is increasing my payment to cover the taxes they paid in error. This is 100 % their error, yet they want me to reimburse them for the taxes they paid in error, and which I also paid to the tax collector. \nI have spoken with them 3 times and the first two times was told this would be resolved. Today they called me and said this is the resolution, that I reimburse them via a payment increase for the taxes they paid and have not received back from the tax collector. \nThey at this point are unwilling to do anything different. \nMy request has always been and still is that they take this off of my account and that they seek a refund from the tax department. The tax department shows an overpayment and they have said they will gladly refund the money to Flagstar upon their request."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+##  [2] "experian credit score is 60-85 points lower than XXXX and XXXX. How is this even possible? When i called them to discuss my concern they stated that i needed to file a claim. How can i possibly file a claim against them? they reporting that my credit score is 670 approximately when the other two credit bureaus is displaying approx 750. \n\nI need a logical explanation to how such a difference is even legal or possible. I have matched all three bureaus i dont see a significant difference in they way they are reporting."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+##  [3] "I am completely dissatisfied with Seterus and CFPB. At XXXX years old why do I need to keep repeating the issue. Let me put this in the best layman terms for both of you organizations. \nI HAVE PAID MY TAXES AND INSURANCE ALWAYS. DURING MY DELINQUENCY SETERUS ALSO ADVANCED TAXES AND INSURANCE. THERE IS DOUBLE PAYMENT FOR THE PAST AT LEAST 2 YEARS IF NOT MORE AND THERE HAS NOT BEEN ANY RESOLUTION. NOW THEY ARE AGAIN THREATENING FORECLOSURE EVEN THOUGH THEY ADMIT NOT SENDING A BILLING STATEMENT UNTIL LATE XX/XX/2018 WHEN APPARENTLY THE LOAN WAS ALREADY 2 PAYMENTS BEHIND. ONCE AGAIN AT XXXX I'M NOT GOING TO REMEMBER EVERYTHING AND SETERUS IS ABSOLUTELY NON-COOPERATIVE. TAXES AND INSURNACE HAVE NEVER BEEN RESEARCHED PROPERLY BY THE SERVICER AS THEY WANT TO JUST MOVE YOU AROUND FROM ONE DEPARTMENT TO ANOTHER. AT XXXX I DESERVE THAT THIS COMPLAINT BE FULLY RESPONDED AND RESEARCHED ABOUT ALL THE DOUBLE PAYMENTS, THAT INCLUDES YOU CFPB AS WELL. WHAT'S YOUR PURPOSE OTHER THAN TO SAY COMPAINT CLOSED BUT NOT EVEN DELIBERATED BY YOU WITH THE SERVICER. I DONT WANT TO GO INTO FORECLOSURE I WANT RESOLUTION!"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [4] "Received a call from phone number ( XXXX ) XXXX at XXXX XXXX  on XX/XX/2019. The caller had a heavy accent but claimed his name was \" XXXX XXXX, '' and admitted he was calling from XXXX ; the phone number is from XXXX, Mississippi. He claimed I owed a debt of about XXXX dollars to XXXX XXXX XXXX for landline services. I had had my landline disconnected three months ago, and have a hard copy receipt showing I do not have a balance. When I told the caller I don't owe a dime and would not pay, he made a vague threat to \" take appropriate action. '' I do not know what was going on, but the caller had my name and address."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+##  [5] "On XX/XX/2019, I contacted my current private loan company RISLA ( \" Rhode Island Student Loan Authority '' ) about refinancing a loan. The representative reviewed the account and noted that I had a high interest rate of 7.75 %. The representative advised me that refinancing my loan through their program would greatly reduce my interest rate and could result in a lower monthly payment. The representative advised that as long as met minimum credit requirements, that I would be able refinance. I reviewed the requirements outlined on their website and noted the following qualification statement : \" Unfortunately, refinancing isn't an option for everyone. If you are looking to refinance your loans, you are going to need to have good credit, or at least have a cosigner with good credit. What exactly does that mean? Although criteria varies from lender to lender, having good credit typically means : Being current on all of you existing debt Having little to no delinquency of your outstanding debts over the past few years Having a credit score at least in the mid 600 's, but often higher Having no public records such as judgments, liens, or bankruptcies on your credit report Being able to demonstrate your monthly earnings and meeting the lender 's minimum earning thresholds. '' In reviewing my situation, I confirmed that I met and exceeded all the above outlined criteria. Reasonably relying on the lender 's website statement and representative, I applied for refinancing of my private loan. \n\nNo more than five minutes after applying online to refinance, I was informed that I did not qualify for the loan and my application was denied. \n\nOn XX/XX/2019, I received a letter from the lender outlining the reasons for the denial. \n\nIn their denial, the lender noted the following reasons for the denial : 1 ) Excessive obligation in relation to income 2 ) FICO score below acceptable value 3 ) Liquidity is less than monthly expenses On XX/XX/2019, I called the lender to review the denial letter. The lender representative specifically cited the following reasons for the denial. \n\n1 ) My savings liquidity was too low. \n2 ) My debt to income ration was 67 %, which exceeded their 50 % requirement 3 ) My credit score was XXXX, not the XXXX that they require. \n\nThe lender also informed me that a hard inquiry would be noted on my credit profile due to the refinancing application. \n\nWhen considered in its totality, this lender coaxed me into making an application for a loan that on its face was attainable. Nothing in their stated criteria on the website nor in the statements made to me by the representative indicated that I needed to have the money in my savings account, a 50 % debt to income ratio, or a XXXX credit score to qualify for the loan. \n\nIn further explanation of their reasoning for the denial, the lender indicated to me that their guidelines for qualification are subject to change and that explains why the criteria they use is not outlined on their website. \n\nThis was an unfair solicitation and constitutes an unfair business practice. RISLA fraudulent induced me into making an application, not adequately spelling out the specific criteria for which to qualify. Furthermore, I am now penalized for making the application due to the hard inquiry placed on my credit report. \n\nI request a full accounting and investigation of their unfair application practice."
+##  [6] "On XX/XX/2019 I contacted Clearone Advantage to try to receive help lowering my credit card interest rate. Upon speaking with the customer service rep, XXXX XXXX, I felt a little uneasy due to the personal questions he was asking me such as SSN, address etc. I was just calling to get a feel of the company and their workings to see how they eliminate debt. I was not ready to move forward with a debt consolidation plan or to have the company pull a credit report, however I felt some what pressured by the rep. Instead of giving him my personal information which he was asking for he said that he had a copy of credit report readily available and he read off my personal information to me to confirm. This was surprising because I did NOT give ClearOne consent to pull my credit. After our call I received notifications from the credit bureaus regarding the hard inquiry. I was highly upset and feel that the inquiry should be removed as I never gave permission to pull the report."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+##  [7] "Credit Report mailed to me dated XX/XX/19 contains no reference to an account with XXXX XXXX XXXX. Reference to an account with XXXX XXXX XXXX appears on the online credit report I have just viewed. This materially and negatively affected my credit score as detailed in complaints XXXX and XXXX."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+##  [8] "In XXXX of this year, I knew I was getting very close to the 80 % LTV to terminate PMI payments on my mortgage. I contacted the servicer and filled out the form, made an additional {$11.00} payment in early XXXX to get to their requested value and paid a {$120.00} certification fee to have the PMI removed. I had two phone conversations that indicated that I had made the necessary steps. Nothing happened. In XXXX, I reached out to the servicer again. They indicated that I needed to submit the form again, which I did, but now two months later nothing has happened. I believe now that I am well below the 78 % LTV to require automatic termination of my PMI, yet nothing has happened to my claim since XXXX."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [9] "I have been disputing these accounts for a while with no success, I did not open these accounts and did not receive any mo-notary gains nor services. \n\nXXXX XXXX XXXX XXXX XXXX XXXX"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+## [10] "I received a letter from RCMB dated for XX/XX/2018 that stated I owed an amount for {$110.00}. \nI immediately sent RMCB a certified mail letter requesting validation of the debt. \nWithin the letter that I provided to the CFPB is clear what i requested specifically and expected in return from RMCB .... \nHowever, what I received was a bunch of coded numbers and my name &amp; address With no signature from the original creditor they represent .... \nI immediately called RMCB and asked why they did not provide proper validity of the debt and I was told by a representative they were unable to provide the items requested in my letter do to HIPPA Laws .... \nSo I further ask the representative about the information I received about the debt that didnt have a signature and she made it very clear the information was not sent by their company and that the original creditor sent the information. \nSo I immediately called the original creditor to ask why they did not provide a signature on the documents I received. \nXXXX made it very clear they did not send the documents and asked me what was the name on the actual exterior envelope? \nI then told the representative of XXXX it was sent from RMCB which is why I was calling because I was confused to who sent it. \nShe indicated what the documents was but informed me they did not send them as stated by RMCB that denied sending them. \n\nSo I am first not understanding why RMCB would deny sending this info and why RMCB is not respecting the law thats very clear according to FTC and FDCPA, for a proper validation of debt."
+```
+
+---
+
+# Text as data
+
+What is a typical way to represent this text data for modeling?
+
+
+```r
+library(tidytext)
+library(SnowballC)
+
+complaints %&gt;% 
+  unnest_tokens(word, consumer_complaint_narrative) %&gt;% 
+  anti_join(get_stopwords()) %&gt;%  
+  mutate(stem = wordStem(word)) %&gt;% 
+  count(complaint_id, stem) %&gt;%  
+  bind_tf_idf(stem, complaint_id, n) %&gt;% 
+  cast_dfm(complaint_id, stem, tf_idf)
+```
+
+```
+## Document-feature matrix of: 1,344 documents, 5,602 features (99.0% sparse).
+##          features
+## docs              10     100.00     120.00     150.00     170.00     250.00    270.00    320.00     400.00
+##   3113965 0.02549782 0.02867556 0.03630237 0.03894441 0.04008627 0.07591058 0.0414368 0.0414368 0.03559637
+##   3114942 0          0          0          0          0          0          0         0         0         
+##   3114951 0.03741528 0          0          0          0          0          0         0         0         
+##   3115033 0          0          0          0          0.07730923 0          0         0         0         
+##   3116009 0          0          0          0          0          0          0         0         0         
+##   3116478 0          0          0          0          0          0          0         0         0         
+##          features
+## docs          430.00
+##   3113965 0.03894441
+##   3114942 0         
+##   3114951 0         
+##   3115033 0         
+##   3116009 0         
+##   3116478 0         
+## [ reached max_ndoc ... 1,338 more documents, reached max_nfeat ... 5,592 more features ]
+```
+
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# This representation...
+
+- .large[is incredibly sparse]
+- .large[of high dimensionality]
+- .large[with a huge number of features]
+
+---
+
+class: inverse, center, middle
+
+# 📄 WORD EMBEDDINGS 📔
+
+---
+
+class: right, middle
+
+&lt;h1 class="fa fa-quote-left fa-fw"&gt;&lt;/h1&gt;
+
+&lt;h1&gt; You shall know a word by the company it keeps. &lt;/h1&gt;
+
+&lt;h1 class="fa fa-quote-right fa-fw"&gt;&lt;/h1&gt;
+
+.large[John Rupert Firth]
+
+---
+
+class: inverse
+
+# Modern word embeddings
+
+--
+
+- word2vec
+
+--
+
+- GloVe
+
+--
+
+- fastText
+
+--
+
+- language models with transformers like ULMFiT and ELMo
+
+---
+
+class: inverse, left, top
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# We can determine word embeddings using...
+
+- .large[word counts]
+- .large[matrix factorization]
+
+.footnote[
+&lt;a href="https://multithreaded.stitchfix.com/blog/2017/10/18/stop-using-word2vec/" style="color: white"&gt;Moody, Chris. "Stop using word2vec." MultiThreaded blog (2017).&lt;/a&gt;
+]
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```r
+tidy_complaints &lt;- complaints %&gt;%
+  select(complaint_id, consumer_complaint_narrative) %&gt;%
+  unnest_tokens(word, consumer_complaint_narrative) %&gt;%
+  group_by(word) %&gt;%
+  filter(n() &gt;= 50) %&gt;%
+  ungroup()
+
+tidy_complaints
+```
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```
+## # A tibble: 217,719 x 2
+##    complaint_id word   
+##           &lt;dbl&gt; &lt;chr&gt;  
+##  1      3324412 letters
+##  2      3324412 was    
+##  3      3324412 sent   
+##  4      3324412 to     
+##  5      3324412 equifax
+##  6      3324412 xxxx   
+##  7      3324412 and    
+##  8      3324412 on     
+##  9      3324412 xx     
+## 10      3324412 xx     
+## # … with 217,709 more rows
+```
+
+---
+
+# Counting words
+
+Next, we can create nested dataframes.
+
+
+```r
+nested_words &lt;- tidy_complaints %&gt;%
+  nest(words = c(word))
+
+nested_words
+```
+
+```
+## # A tibble: 1,343 x 2
+##    complaint_id words             
+##           &lt;dbl&gt; &lt;list&gt;            
+##  1      3324412 &lt;tibble [199 × 1]&gt;
+##  2      3202322 &lt;tibble [13 × 1]&gt; 
+##  3      3378483 &lt;tibble [137 × 1]&gt;
+##  4      3479760 &lt;tibble [182 × 1]&gt;
+##  5      3354931 &lt;tibble [208 × 1]&gt;
+##  6      3372195 &lt;tibble [177 × 1]&gt;
+##  7      3236713 &lt;tibble [75 × 1]&gt; 
+##  8      3164208 &lt;tibble [27 × 1]&gt; 
+##  9      3238167 &lt;tibble [51 × 1]&gt; 
+## 10      3228381 &lt;tibble [434 × 1]&gt;
+## # … with 1,333 more rows
+```
+
+---
+
+# Time to SLIDE ⚡
+
+Let's identify **windows** in order to calculate the skipgram probabilities.
+
+---
+
+# Time to SLIDE ⚡
+
+
+
+```r
+slide_windows &lt;- function(tbl, window_size) {
+  
+  skipgrams &lt;- slider::slide(
+    tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE
+    )
+  
+  safe_mutate &lt;- safely(mutate)
+  
+  out &lt;- map2(skipgrams, 1:length(skipgrams), ~ safe_mutate(.x, window_id = .y))
+  
+  out %&gt;%
+    transpose() %&gt;% 
+    pluck("result") %&gt;% 
+    compact() %&gt;%
+    bind_rows()
+}
+```
+
+---
+
+class: inverse
+
+# Window size? 🤔
+
+--
+
+- Determines semantic meaning the embeddings capture
+
+--
+
+- Smaller window size (3-4) focuses on how the word is used and learns what other words are functionally similar
+
+--
+
+- Larger window size (~10) captures the domain or topic of each word
+
+---
+
+class: inverse
+
+# Point-wise mutual information
+
+--
+
+- How often do words occur on their own?
+
+--
+
+- How often words occur together with other words?
+
+--
+
+- PMI is a measure of association to compute this
+
+--
+
+- PMI is logarithm of the probability of finding two words together, normalized for the probability of finding each of the words alone
+
+
+
+---
+
+# Calculate PMI
+
+We use PMI to measure which words occur together more often than expected based on how often they occurred on their own.
+
+
+```r
+library(widyr)
+library(furrr)
+
+plan(multiprocess)  ## for parallel processing
+
+tidy_pmi &lt;- nested_words %&gt;%  
+  mutate(words = future_map(words, slide_windows, 4)) %&gt;%
+  unnest(words) %&gt;%
+  unite(window_id, complaint_id, window_id) %&gt;%
+  pairwise_pmi(word, window_id)
+```
+
+---
+
+# Calculate PMI
+
+When PMI is high, two words are associated with each other, likely to occur together.
+
+
+```
+## # A tibble: 138,250 x 3
+##    item1      item2      pmi
+##    &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt;
+##  1 was        letters -3.02 
+##  2 sent       letters  2.92 
+##  3 to         letters  0.197
+##  4 equifax    letters  0.701
+##  5 xxxx       letters -0.929
+##  6 and        letters  0.111
+##  7 on         letters -1.14 
+##  8 xx         letters -0.898
+##  9 requesting letters  1.59 
+## 10 validation letters  2.47 
+## # … with 138,240 more rows
+```
+
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors &lt;- tidy_pmi %&gt;%
+  widely_svd(
+    item1, item2, pmi, 
+    nv = 100, maxit = 1000
+  )
+```
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors
+```
+
+```
+## # A tibble: 61,000 x 3
+##   item1      dimension    value
+##   &lt;chr&gt;          &lt;int&gt;    &lt;dbl&gt;
+## 1 was                1 -0.0972 
+## 2 sent               1 -0.00729
+## 3 to                 1 -0.0309 
+## 4 equifax            1  0.0333 
+## 5 xxxx               1 -0.139  
+## 6 and                1 -0.0292 
+## 7 on                 1 -0.0982 
+## 8 xx                 1 -0.152  
+## 9 requesting         1  0.0419 
+## # … with 60,991 more rows
+```
+
+---
+
+class: inverse, left, bottom
+
+## Each word can be represented as a numeric vector in this 
+
+- .large[new,]
+- .large[dense,]
+- .large[100-dimensional] 
+
+## feature space. 
+
+---
+
+# Explore CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+
+```r
+nearest_neighbors &lt;- function(df, token) {
+  df %&gt;%
+    widely(~ . %*% (.[token, ]), 
+           sort = TRUE, 
+           maximum_size = NULL)(item1, dimension, value) %&gt;%
+    select(-item2)
+}
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 610 x 2
+##    item1          value
+##    &lt;chr&gt;          &lt;dbl&gt;
+##  1 error         0.109 
+##  2 it            0.0503
+##  3 clearly       0.0410
+##  4 was           0.0409
+##  5 system        0.0395
+##  6 email         0.0379
+##  7 item          0.0375
+##  8 it's          0.0363
+##  9 much          0.0318
+## 10 investigation 0.0309
+## # … with 600 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 610 x 2
+##    item1    value
+##    &lt;chr&gt;    &lt;dbl&gt;
+##  1 month   0.199 
+##  2 year    0.0961
+##  3 months  0.0655
+##  4 payment 0.0638
+##  5 week    0.0635
+##  6 time    0.0617
+##  7 years   0.0608
+##  8 weeks   0.0580
+##  9 day     0.0508
+## 10 fee     0.0481
+## # … with 600 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 610 x 2
+##    item1       value
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 fee        0.122 
+##  2 fees       0.0516
+##  3 month      0.0481
+##  4 get        0.0415
+##  5 payments   0.0402
+##  6 income     0.0399
+##  7 rate       0.0364
+##  8 letter     0.0350
+##  9 charges    0.0337
+## 10 additional 0.0335
+## # … with 600 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  filter(dimension &lt;= 8) %&gt;%
+  group_by(dimension) %&gt;%
+  top_n(12, abs(value)) %&gt;%
+  ungroup %&gt;%
+  ggplot(aes(value, item1, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4)
+```
+
+---
+
+class: center
+
+&lt;img src="index_files/figure-html/unnamed-chunk-18-1.png" width="95%" /&gt;
+
+---
+
+class: center
+
+&lt;img src="index_files/figure-html/unnamed-chunk-19-1.png" width="95%" /&gt;
+
+---
+
+# Embeddings in modeling
+
+The classic and simplest approach is to treat each document as a collection of words and summarize the word embeddings into **document embeddings**.
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;% 
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+embedding_matrix &lt;- tidy_word_vectors %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% embedding_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 1343  100
+```
+
+---
+
+class: inverse, center, middle
+
+### 😭 WHAT IF YOUR DATASET IS TOO SMALL? 😩
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+library(textdata)
+
+glove6b &lt;- embedding_glove6b(dimensions = 100)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+glove6b
+```
+
+```
+## # A tibble: 400,000 x 101
+##    token      d1      d2      d3      d4      d5      d6      d7      d8      d9
+##    &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 "the" -0.0382 -0.245   0.728  -0.400   0.0832  0.0440 -0.391   0.334  -0.575 
+##  2 ","   -0.108   0.111   0.598  -0.544   0.674   0.107   0.0389  0.355   0.0635
+##  3 "."   -0.340   0.209   0.463  -0.648  -0.384   0.0380  0.171   0.160   0.466 
+##  4 "of"  -0.153  -0.243   0.898   0.170   0.535   0.488  -0.588  -0.180  -1.36  
+##  5 "to"  -0.190   0.0500  0.191  -0.0492 -0.0897  0.210  -0.550   0.0984 -0.201 
+##  6 "and" -0.0720  0.231   0.0237 -0.506   0.339   0.196  -0.329   0.184  -0.181 
+##  7 "in"   0.0857 -0.222   0.166   0.134   0.382   0.354   0.0129  0.225  -0.438 
+##  8 "a"   -0.271   0.0440 -0.0203 -0.174   0.644   0.712   0.355   0.471  -0.296 
+##  9 "\""  -0.305  -0.236   0.176  -0.729  -0.283  -0.256   0.266   0.0253 -0.0748
+## 10 "'s"   0.589  -0.202   0.735  -0.683  -0.197  -0.180  -0.392   0.342  -0.606 
+## # … with 399,990 more rows, and 91 more variables: d10 &lt;dbl&gt;, d11 &lt;dbl&gt;,
+## #   d12 &lt;dbl&gt;, d13 &lt;dbl&gt;, d14 &lt;dbl&gt;, d15 &lt;dbl&gt;, d16 &lt;dbl&gt;, d17 &lt;dbl&gt;,
+## #   d18 &lt;dbl&gt;, d19 &lt;dbl&gt;, …
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```r
+tidy_glove &lt;- glove6b %&gt;%
+  pivot_longer(contains("d"),
+               names_to = "dimension") %&gt;%
+  rename(item1 = token)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```
+## # A tibble: 40,000,000 x 3
+##    item1 dimension   value
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 the   d1        -0.0382
+##  2 the   d2        -0.245 
+##  3 the   d3         0.728 
+##  4 the   d4        -0.400 
+##  5 the   d5         0.0832
+##  6 the   d6         0.0440
+##  7 the   d7        -0.391 
+##  8 the   d8         0.334 
+##  9 the   d9        -0.575 
+## 10 the   d10        0.0875
+## # … with 39,999,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1       value
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 error        34.6
+##  2 errors       28.1
+##  3 data         19.8
+##  4 inning       19.4
+##  5 game         19.3
+##  6 percentage   19.3
+##  7 probability  19.2
+##  8 unforced     19.1
+##  9 fault        19.1
+## 10 point        19.0
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 month      32.4
+##  2 year       31.2
+##  3 last       30.6
+##  4 week       30.5
+##  5 wednesday  29.6
+##  6 tuesday    29.5
+##  7 monday     29.3
+##  8 thursday   29.1
+##  9 percent    28.9
+## 10 friday     28.9
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1        value
+##    &lt;chr&gt;        &lt;dbl&gt;
+##  1 fee           39.8
+##  2 fees          30.7
+##  3 pay           26.6
+##  4 $             26.4
+##  5 salary        25.9
+##  6 payment       25.9
+##  7 £             25.4
+##  8 tax           24.9
+##  9 payments      23.8
+## 10 subscription  23.1
+## # … with 399,990 more rows
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Pre-trained word embeddings...
+
+- encode rich semantic relationships
+
+- can be less than ideal for specific tasks
+
+---
+
+class: inverse
+
+# How can we integrate pre-trained word embeddings in modeling?
+
+--
+
+- Again, we can create simple document embeddings by summarizing
+
+--
+
+- The GloVe embeddings do not contain all the tokens in the CPFB complaints, and vice versa
+
+---
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;%
+  inner_join(tidy_glove %&gt;%
+               distinct(item1) %&gt;%
+               rename(word = item1)) %&gt;%
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+glove_matrix &lt;- tidy_glove %&gt;%
+  inner_join(tidy_complaints %&gt;% 
+               distinct(word) %&gt;%
+               rename(item1 = word)) %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% glove_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 1343  100
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Fairness and 
+# Word 
+# Embeddings 
+
+---
+
+# Fairness and word embeddings 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- Human prejudice or bias in the corpus becomes imprinted into the embeddings
+
+---
+
+class: inverse
+
+# Fairness and word embeddings 
+
+--
+
+- African American first names are associated with more unpleasant feelings than European American first names
+
+--
+
+- Women's first names are more associated with family and men's first names are more associated with career
+
+--
+
+- Terms associated with women are more associated with the arts and terms associated with men are more associated with science
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1608.07187" style="color: white"&gt;Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.&lt;/a&gt;
+]
+
+---
+
+&lt;img src="figs/turkish.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse, middle, center
+
+## Bias is so ingrained in word embeddings that they can be used to quantify change in social attitudes over time
+
+.footnote[
+&lt;a href="https://www.pnas.org/content/115/16/E3635" style="color: white"&gt;Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.&lt;/a&gt;
+]
+
+---
+
+# Biased training data 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- For example, consider the case of Wikipedia
+
+--
+
+- Wikipedia both reflects social/historical biases **and** generates bias
+
+
+.footnote[
+[Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.](https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4)
+]
+
+---
+
+# Biased embeddings in models
+
+Consider a straightforward sentiment analysis model trained to predict how positive text is. **Compare:**
+
+.pull-left[
+"Let's go get Italian food!" 😊
+
+]
+
+.pull-right[
+"Let's go get Mexican food!" 😕
+]
+
+
+.footnote[
+[Speer, Robyn. "How to make a racist AI without really trying." ConceptNet blog (2017).](http://blog.conceptnet.io/posts/2017/how-to-make-a-racist-ai-without-really-trying/)
+]
+---
+
+class: inverse, left, top
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Consider some options
+
+--
+
+- .large[Find your own embeddings]
+
+--
+
+- .large[Consider not using embeddings]
+
+--
+
+- .large[Can embeddings be debiased?]
+---
+
+class: inverse
+
+# Can embeddings be debiased?
+
+--
+
+- Embeddings can be reprojected to mitigate a specific bias (such as gender bias) using specific sets of words
+
+--
+
+- Training data can be augmented with counterfactuals
+
+--
+
+- Other researchers suggest that fairness corrections occur at a decision
+
+--
+
+- Evidence indicates that debiasing still allows stereotypes to seep back in
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1903.03862" style="color: white"&gt;Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).&lt;/a&gt;
+]
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Word embeddings in the
+# REAL WORLD
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Thanks!
+
+&lt;a href="http://twitter.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="http://github.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://juliasilge.com" style="color: white;"&gt;&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;&amp;nbsp; juliasilge.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://tidytextmining.com" style="color: white;"&gt;&lt;i class="fa fa-book fa-fw"&gt;&lt;/i&gt;&amp;nbsp; tidytextmining.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="mailto:julia.silge@gmail.com" style="color: white;"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; julia.silge@gmail.com&lt;/a&gt;
+
+Slides created with &lt;a href="http://remarkjs.com/" style="color: #5A6B8C;"&gt;&lt;b&gt;remark.js&lt;/b&gt;&lt;/a&gt; and &lt;a href="https://github.com/yihui/xaringan" style="color: #5A6B8C;"&gt;&lt;b&gt;xaringan&lt;/b&gt;&lt;/a&gt;
+
+Photo by &lt;a href="https://unsplash.com/@patrickian4?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" style="color: #5A6B8C;"&gt;&lt;b&gt;Patrick Fore&lt;/b&gt;&lt;/a&gt; on &lt;a href="https://unsplash.com/s/photos/letters?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" style="color: #5A6B8C;"&gt;&lt;b&gt;Unsplash&lt;/b&gt;&lt;/a&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightLanguage": "r",
+"highlightStyle": "docco",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
