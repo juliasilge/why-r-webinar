@@ -49,10 +49,12 @@ meta() %>%
 ```{r include=FALSE, eval=FALSE}
 library(tidyverse)
 
+set.seed(123)
 complaints <- read_csv("complaints.csv.zip") %>%
   janitor::clean_names() %>%
   filter(date_received >= "2019-01-01",
          !is.na(consumer_complaint_narrative)) %>%
+  sample_frac(0.5) %>%
   select(complaint_id, date_received, product, issue, company, state,
          consumer_complaint_narrative)
 
@@ -121,8 +123,8 @@ Let's look at complaints submitted to the [United States Consumer Financial Prot
 ```{r R.options = list(width = 80)}
 library(tidyverse)
 
-complaints <- read_csv("complaints.csv.gz") %>%
-  sample_frac(0.1)
+complaints <- read_csv("complaints.csv.gz")
+
 names(complaints)
 ```
 

@@ -82,8 +82,8 @@ Let's look at complaints submitted to the [United States Consumer Financial Prot
 ```r
 library(tidyverse)
 
-complaints &lt;- read_csv("complaints.csv.gz") %&gt;%
-  sample_frac(0.1)
+complaints &lt;- read_csv("complaints.csv.gz")
+
 names(complaints)
 ```
 
@@ -106,16 +106,16 @@ complaints %&gt;%
 ```
 
 ```
-##  [1] "Although I am checking for and addressing missing and or deficient aspects of REPORTING COMPLIANCES and not contesting any debt of compliant nature, I should make you aware that since unlawful reporting transitions collection into an equally not complaint circumstance. Being still yet not validated by document fact in compliance to requisite standards, it is to be announced yet again that legally I have no knowledge of the validity of the alleged claims of delinquency and or derogatory nature, nor of the certifiably compliant matter to either any of its collection attempts and or its reporting despite previous consumer filed composed complaints checking for each. Might it be known, especially shall I elect to take this matter up to a civil court, any debt and or derogatory claim must be pursued ( particularly for collection ) in a very defined and precisely compliant and physically verifiable or certifiable manner as detailed in the requisite obeyed federal and state collection and reporting regulations associated with any of the above noted said claim ( s ) to include but not limited to the FCBA, FCRA, HIPAA PRIVACY RULE, FACTA, FDCPA and TCPA, etc. ADDITIONALLY, if an entity acts as a collector and also elects to act as a reporting party of consumer credit they must as well adhere to every single one even each any and all of the regulatory reporting requisites and standards of reporting with legal standing in full accordance of laws and accepted reporting standards. To date, the plaintiff has failed to demonstrate any capacity or willingness to validate the alleged debt much less certify the fair, accurate, complete and compliant reporting of the claims, particularly being significantly deficient is any display of certified metro 2 compliance. As such, given the fact of recent breaches of information collection"
-##  [2] "XX/XX/2019 - I chatted with Amex Customer Service Rep with regards to changing my card account to a no fee card. The customer service rep advised to close the card instead and assured me multiple times that my rewards points will not be impacted because I have another card linked to the same rewards account. \n\nTrusting the company 's representative, I proceeded with closing my account. \n\nXX/XX/2019 - Amex went ahead and revoked my points that I had earned on my account. I called in multiple times over the next few weeks offering to reinstate my card and get my points back but the company has not even responded to my query even though the reps always tell me that I will receive a call back in 2-4 weeks."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-##  [3] "XX/XX/2017, I was involved in a car accident. I had XXXX for a auto insurance carrier and XXXX XXXX for my health insurance. The insurance had already met the policy limit with XXXX and they was supposed to be paid with XXXX  XXXX. I provided the health insurance company with the Letter and payment history to let them process the claim. I called XXXX XXXX for a year and half now. I haven't go nowhere. I met my health deductible with XXXX  XXXX so it should been paid in full. Now, I have this PHOENIX FINANCIAL SERVICES LLC that never sent me a bill nor provided me with this debt."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-##  [4] "I opened a checking account with MoneyLion on XX/XX/2019 to take part in their 'pave the wage campaign which offered a bonus of 17 % of your direct deposit ( Up To {$590.00} XXXX after opening an account, opting in and maintaining direct deposit for 90 days. I opted in through money lion app and have setup a direct deposit though my employer since then and has been receiving it in my MoneyLion account for last 5 months. Even though I have met the terms for bonus, I have not received it. So I called MoneyLion customer service on XX/XX/2019 about this and the agent verified that i have qualified and he is going to escalate this case to a supervisor. I did not hear back from MoneyLion for 3 weeks and so I called again today, on XX/XX/2019, and was told this case is still pending for escalation and they do not have an ETA on when this will be resolved and I will get my sign up bonus.Please look into it so that Money Lion will honor original terms of promotion."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-##  [5] "I lost my job a few months ago ( XX/XX/XXXX ). I did not call Navient until today ( XX/XX/XXXX ) because I figured I would have full-time employment by now. I was told I do not qualify for forbearance because I've maxed it out, I was told I do not qualify for a deferment because of the loan types, I was told I could not lower my payments beyond what they were. I do not have income or a means to pay them. I was told to contact a placement agency but there wasn't anything they could do to work with me on this. \n\nI am not trying to avoid paying my debts but I have been struggling with this since my graduation in XXXX. Both companies are not being held accountable for this situation yet I am."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-##  [6] "I have reached out to XXXX and Transunion in regards to the numerous inquiries that's appearing on my credit report.I let them know that I was a victim of their inquiry issue. They have neglected to remove them as well as bankruptcy and a collection account that does NOT belong to me. They have said it came back as verified and I requested them to provide me who verified the accounts. They have failed to do that as well. XXXX has abided by the law and deleted said accounts and stated they were unverifiable. I am trying to understand how one bureau can not verify accounts and another bureau who will not provide proof of verification can. I also provided documentation from the U.S. BANKRUPTCY COURT whom in which they said furnished the information stating their accusations are false. To my understanding the accounts must be verified by the alleged FURNISHER. Any automated response or e-Oscar verification is unacceptable."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-##  [7] "I originally reached out to capital accounts after seeing a charge on my account with XXXX for a very large, false amount that had never been reported to me by the collection agency or school themselves. I told them the debt was invalid with no supporting documentation with no help I went to the XXXX  of Virginia Department of Higher Education and they found that the school did not have any documents holding me financially responsible for this debt and ruled that i was not responsible. It was in fact invalid, it was noted XXXX did not take the proper steps and was at fault. Fast forward to now Capital accounts still refuses to take the account off and the school is not cooperating with me either despite what the director told higher education, me and supporting documentation. They are hanging up on my face, refusing to allow me to talk to management higher up positions, my calls are continuously \" dropping '' despite being very polite, respectful, calm and showing all proper documentation. They are claiming to wait on the action of the school but the school is claiming to be waiting on them it is a entire run around. the main deal is the amount is not supposed to be on the and needs to be removed expeditiously."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-##  [8] "I deposited XXXX on XX/XX/2019 and was told that my funds would be available on XX/XX/2019 on the deposit slip with plenty of disclaimers. \nAs of this morning XX/XX/2019 my funds were unavailable. The above mentioned check cleared the account it was drawn upon on XX/XX/2019. This is verified. \nI have bills to pay on time in order to keep up my credit rating and when I personally tried to talk to an employee of Chase I was told that the funds would not be available until XX/XX/XXXX. \nAfter sitting at the bank for XXXX minutes to no avail then next talking on the phone with Chase for almost XXXX minutes my funds were finally released. \nCan a bank legally hold funds for 9 days as they did today or worse for 13 days as they tried to do today? \nI have been a Chase customer for over 25 years!"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-##  [9] "PayPal is charging me for a fraudulent transaction and has a negative amount of {$1300.00} on my account. I have tried to resolve this many times but they are blocking my emails and demanding me to pay this fraudulent transaction. I did not authorize or give consent for this money to be taken out of my account"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-## [10] "This account is reporting as a collection when i paid this balance off before it went into collections. But on my XXXX report it is showing a collections account."
+##  [1] "Love, Beal, and Nixon attempts to collect from XXXX individuals with federally protected, exempt funds."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [2] "I have been charged an \" credit life insurance fee '' of various amounts. The website does not even allow me to look at statements further than XX/XX/2018. It says access blocked which is absurd since it is my account. \n\nStarting from XXXX XXXX, I was charged {$26.00} XXXX XXXX - {$39.00} XXXX XXXX - {$33.00} XXXX XXXX - {$34.00} XXXX XXXX. - {$34.00} XXXX. XXXX - {$33.00}"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+##  [3] "For the last 2 plus years, I have not received a copy of my monthly billing statement nor have I been afforded the proper application of my monies I paid to this account. There is a huge discrepancy with my auto loan payments and I have also asked for the total amounts of interest paid since loan inception which began in XX/XX/2016 to current and the presidents office in Texas as well as the auto loan office in California failed to send me accurate account of my loan as last year it stated I paid over XXXX dollars and now my online account states I have only paid slightly over XXXX. They will not release my total payments towards principal vs interest for the years 2016 to current on their letterhead although I was informed it was mailed. I need this document as well for tax purposes. Additionally they are not reporting my account balance monthly to the credit bureau, I have spoke with Capital one on this as well, and no one seems to know how my payments are being applied, it is a simple interest loan and thats about all i get. if you look at my ledger, if i pay early they take a huge chunk of my payment and apply to interest, but if i pay post my due date which is the XXXX of the month, they apply a good amount towards principal and less towards interest. Doesnt add up and no one is talking. I advised if i do not receive my billing statements for the last 2 plus years, as i have called and msg them constantly and nothing. i also have been blocked from msg them inhouse as well as looking at my statements online and nothing received by mail. they have blocked me out of my account and play XXXX as nothing is going on with my account, with me having a prior background in banking and financials i know this is a bunch of malarkey. I advised if i do not receive a statement, no more monies will be paid to this account as i only purchased the vehicle for XXXX and i was to have a gap policy of XXXX added to the account but that is even wrong. I am done. I want all of my documents and fyi this started from the beginning in XX/XX/2016 where they refused to send the dealership and myself a copy of my loan terms and payment slips or information on how i was to pay after having the car 1 month. i have only missed a few payments the 2nd year of having car due to furlough but i caught up and paid in advance in lump sums so nothing is adding up and need your assistance as i am no longer talking to this lender it is pointless. Lastly, they refused to send me a copy of my title as well last year so that I could register my car this is how dirty these ppl operate and just like i paid off my cc, i know my car is paid for, how am i paying XXXX more than what i bought the car for its a XXXX car, payments XXXX have had already 3.5 years, not behind in payments, but you still saying i owe XXXX smh.the math even with the interest doesnt add up"                           
+##  [4] "Sounds like a boiler room operation, call all three of our cell phone # 's never leave message, only can hear lots of talking in background on messages. They repeat calls all day and night."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+##  [5] "Please help me to understand what made you close my case, Ditech has not corrected anything, in fact, it has gotten much worse. I sent by email responding to your closed case email, copies of the loan modification and 2 years of payment history showing no missed or late payments. I can send them again if you need. I respectfully request an investigation and recompense. If you are not able to help, kindly direct me to a Consumer Protection Agency that will look into this. Ditech continues to misappropriate my funds in unlawful ways. I have attempted to reason with them so many times, I have lost count. I am XXXX and this continues to be a tremendous hardship for me. Please, someone needs to look into this. Thank you for your time."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+##  [6] "I am filing this complaint with CFPB because in the last 60 days I have been unable to receive any response whatsoever to my online and written complaint mailed to the HSBC Executive Office on XX/XX/XXXX at HSBC Bank USA, N.A., Executive Office, XXXX XXXX XXXX, XXXX, NY XXXX concerning the following : In XX/XX/XXXX, I did a Balance Transfer of XXXX ( including transfer fee ) with a 0 % APR until XX/XX/XXXX. In XX/XX/XXXX, I received my first interest charge on a balance of {$790.00}. The interest computations seem correct ; however, on my statement it reads : \" Interest Charge on Cash Advances ''. By the way, when I look at my transaction history online at the HSBC website, it reads \" Finance Charge Cash Advance '', instead of \" Interest Charge on Cash Advances ''. Either way this is incorrect when listed as a Cash Advance. \nI noticed this error on XX/XX/XXXX when making my timely online payment. \nOn that same date, XX/XX/XXXX, I contacted HSBC via their chat line. I was told that the Balance Transfer showing as a Cash Advance was a computer error on the part of HSBC. I opened up complaint number XXXX and sent a written complaint to the HSBC Executive Office address listed above. \nIn my written complaint, I advised HSBC that I was entitled to an accurate statement reflecting MY transactions. Attached to my written complaint was the chat line conversation that had been emailed to me as documentation. This chat documentation also included the Executive Office address where I was directed to mail my complaint. \nAlso included in my complaint letter were portions of HSBC 's own credit card agreement showing that Purchases, Cash Advances, and Balance Transfers are distinctly different transactions. Additionally, according to HSBC 's own credit card agreement, I am entitled to a response to a written complaint within 30 days. So 30 days later when I again went to make my timely online payment on or about XX/XX/XXXX, I called HSBC to follow up on my complaint. I was advised that my complaint would be resubmitted. \nIt is now XX/XX/XXXX and I am once again making a timely online payment and, to-date, I have received no response whatsoever from HSBC. As a note, I always make my payments online, although the address to mail payments is : HSBC Bank USA, N.A. at XXXX XXXX XXXX, XXXX XXXX IL XXXX. \nAdditional note : In my original letter in the RE section, I indicated the complaint number as XXXX. The correct complaint number XXXX is in the chat documentation attached to my complaint. In my XX/XX/XXXX phone call to HSBC, I was advised of this error and added a notation to my copy of the complaint letter in the RE section. I did not send a new letter to HSBC because they had more than enough information to address and handle my complaint. I have attached a copy of my letter. The original letter was printed out, signed and mailed to HSBC to XX/XX/XXXX."
+##  [7] "I received a copy of my Equifax credit report and noticed that I have these inquiries. I have previously asked/disputed ( 2 ) times for these hard inquiries to be removed. I have not received any documentation providing any information regarding these inquiries and since this is this the case, I hereby request you method of verification for these inquires on my credit report ( both hard &amp; soft inquiries ). You are required to have documentation providing my consent and permissible purpose. If you lack these documents, I ask you to delete these immediately. This is not a dispute ; this is a request for your method of verification.\n\n- Must I remind you that : According to the Fair Credit Reporting Act, Section 604, a creditor shouldnt have access to a consumer 's credit information unless the individual himself gives written permission, or unless credit access is court ordered or requested by a state or local government agency in relation to child support.\n\nIncorrect Personal Information Previously disputed. \n- I am requesting that you delete these inaccurate inquiries from my Credit Report immediately and forward an updated copy of my Credit Report after you have corrected this information. \n- By law, in reference to my rights under the Fair Credit Reporting Act, I deserve and expect a timely response from your Credit Bureau to my dispute. \nUnrecognized/ Authorized inquiries previously disputed. I now ask for your method of verification for these. Either furnish proper verification or delete these immediately. \n- I am requesting that you delete this inaccurate inquiry from my Credit Report immediately and forward an updated copy of my Credit Report after you have corrected this information. \n- By law, in reference to my rights under the Fair Credit Reporting Act, I deserve and expect a timely response from your Credit Bureau to my dispute. \nLastly, be sure to include the name and address of the Company or individuals who were directly contacted in regards to this matter. \n\nFormer Address 1 : XXXX XXXX XXXX XXXX XXXX XXXX  XXXX, IN XXXX First Reported XX/XX/XXXX Last Reported XX/XX/XXXX Former Address 2 : XXXX XXXX XXXX XXXX XXXX, IN XXXX First Reported XX/XX/XXXX Last Reported XX/XX/XXXX This letter was sent Certified mail / Return receipt requested &amp; Notarized. Litigation will be pending based on your actions per this letter. \nCertified Mail # XXXX XXXX XXXX XXXX XXXX XXXX Tracking # XXXX XXXX XXXX XXXX XXXX XXXX"                                                                                                                                                                                                                                                                                                                                                                                                                                           
+##  [8] "I have been a victim of Identity Theft. The following accounts are fraudulent : To protect myself from further harm, I have filed a consumer protection and an Identity Theft report. ( See attached reports. ) I did not authorize these fraudulent accounts. I have also provided you with copies of my social, current and past address and license."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [9] "This has been on going on several month. \n\ni am NOT able to obtain Credit Report from Transunion i called them several times to correct the issue but i just get run around and nothing gets resolved. \n\nthis is very frustrating and affecting my personal life. \n\nplease help!"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+## [10] "I recently applied for a furnisher account long story short I was denied. I dont understand why I would be because I typically approved for everything I apply for. So I checked my credit report so that maybe I would get a better understanding. After doing so I notice some items on my credit report are not mine. Im unsure of how this happened."
 ```
 
 ---
@@ -139,24 +139,24 @@ complaints %&gt;%
 ```
 
 ```
-## Document-feature matrix of: 13,442 documents, 15,564 features (99.6% sparse).
+## Document-feature matrix of: 67,212 documents, 34,261 features (99.8% sparse).
 ##          features
-## docs              30    backup     claim    collect        dai    disput  document     enter    equifax
-##   3113822 0.08508184 0.2706615 0.1484087 0.05719523 0.04841901 0.1594449 0.1238266 0.1306297 0.09430187
-##   3113825 0          0         0         0          0          0         0         0         0         
-##   3113886 0          0         0         0          0          0         0         0         0         
-##   3113949 0          0         0         0          0          0         0         0         0         
-##   3113950 0          0         0         0          0          0         0         0         0         
-##   3113968 0          0         0         0.11070045 0          0         0         0         0         
+## docs             account       auto       bank        call      charg      chase        dai        date
+##   3113204 NA 0.007991838 0.09791573 0.04672194 0.015342414 0.02489768 0.05162948 0.05887824 0.024517773
+##   3113208  0 0.001205381 0          0.02114071 0.006942125 0.01877614 0          0          0.003697929
+##   3113805  0 0.003086795 0          0          0           0          0          0          0          
+##   3113811 NA 0.013890576 0          0          0           0          0          0          0          
+##   3113816  0 0           0          0          0           0          0          0          0          
+##   3113817  0 0           0          0.06435286 0           0.06858606 0          0          0          
 ##          features
-## docs           legal
-##   3113822 0.08863988
-##   3113825 0         
-##   3113886 0         
-##   3113949 0         
-##   3113950 0         
-##   3113968 0         
-## [ reached max_ndoc ... 13,436 more documents, reached max_nfeat ... 15,554 more features ]
+## docs           dollar
+##   3113204 0.046466365
+##   3113208 0.007008357
+##   3113805 0          
+##   3113811 0          
+##   3113816 0          
+##   3113817 0          
+## [ reached max_ndoc ... 67,206 more documents, reached max_nfeat ... 34,251 more features ]
 ```
 
 
@@ -255,20 +255,20 @@ First, we tokenize and transform this dataset to a [tidy data structure](https:/
 
 
 ```
-## # A tibble: 2,461,874 x 2
-##    complaint_id word     
-##           &lt;dbl&gt; &lt;chr&gt;    
-##  1      3290499 the      
-##  2      3290499 following
-##  3      3290499 accounts 
-##  4      3290499 have     
-##  5      3290499 been     
-##  6      3290499 disputed 
-##  7      3290499 on       
-##  8      3290499 these    
-##  9      3290499 dates    
-## 10      3290499 for      
-## # … with 2,461,864 more rows
+## # A tibble: 12,700,715 x 2
+##    complaint_id word    
+##           &lt;dbl&gt; &lt;chr&gt;   
+##  1      3147294 on      
+##  2      3147294 xx      
+##  3      3147294 xx      
+##  4      3147294 2019    
+##  5      3147294 i       
+##  6      3147294 have    
+##  7      3147294 previous
+##  8      3147294 sent    
+##  9      3147294 in      
+## 10      3147294 disputes
+## # … with 12,700,705 more rows
 ```
 
 ---
@@ -286,20 +286,20 @@ nested_words
 ```
 
 ```
-## # A tibble: 13,436 x 2
+## # A tibble: 67,186 x 2
 ##    complaint_id words             
 ##           &lt;dbl&gt; &lt;list&gt;            
-##  1      3290499 &lt;tibble [100 × 1]&gt;
-##  2      3137216 &lt;tibble [69 × 1]&gt; 
-##  3      3271177 &lt;tibble [239 × 1]&gt;
-##  4      3359886 &lt;tibble [345 × 1]&gt;
-##  5      3382641 &lt;tibble [71 × 1]&gt; 
-##  6      3517411 &lt;tibble [157 × 1]&gt;
-##  7      3370655 &lt;tibble [122 × 1]&gt;
-##  8      3388848 &lt;tibble [136 × 1]&gt;
-##  9      3443926 &lt;tibble [38 × 1]&gt; 
-## 10      3135535 &lt;tibble [125 × 1]&gt;
-## # … with 13,426 more rows
+##  1      3147294 &lt;tibble [169 × 1]&gt;
+##  2      3189876 &lt;tibble [111 × 1]&gt;
+##  3      3475559 &lt;tibble [134 × 1]&gt;
+##  4      3134951 &lt;tibble [510 × 1]&gt;
+##  5      3356633 &lt;tibble [692 × 1]&gt;
+##  6      3347791 &lt;tibble [86 × 1]&gt; 
+##  7      3270110 &lt;tibble [101 × 1]&gt;
+##  8      3323749 &lt;tibble [119 × 1]&gt;
+##  9      3481028 &lt;tibble [572 × 1]&gt;
+## 10      3239639 &lt;tibble [33 × 1]&gt; 
+## # … with 67,176 more rows
 ```
 
 ---
@@ -403,20 +403,20 @@ When PMI is high, two words are associated with each other, likely to occur toge
 
 
 ```
-## # A tibble: 1,096,412 x 3
-##    item1     item2     pmi
-##    &lt;chr&gt;     &lt;chr&gt;   &lt;dbl&gt;
-##  1 following the    1.37  
-##  2 accounts  the    0.101 
-##  3 have      the   -0.875 
-##  4 been      the   -1.21  
-##  5 disputed  the    0.342 
-##  6 on        the   -0.133 
-##  7 these     the   -1.79  
-##  8 dates     the    0.762 
-##  9 for       the   -0.0214
-## 10 reasons   the    0.180 
-## # … with 1,096,402 more rows
+## # A tibble: 3,415,366 x 3
+##    item1      item2     pmi
+##    &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;
+##  1 xx         on     1.46  
+##  2 2019       on     0.976 
+##  3 i          on    -1.23  
+##  4 have       on    -1.04  
+##  5 previous   on    -0.445 
+##  6 sent       on    -0.909 
+##  7 in         on    -1.49  
+##  8 disputes   on    -0.0725
+##  9 to         on    -1.28  
+## 10 transunion on     0.109 
+## # … with 3,415,356 more rows
 ```
 
 
@@ -447,19 +447,19 @@ tidy_word_vectors
 ```
 
 ```
-## # A tibble: 268,600 x 3
-##   item1     dimension  value
-##   &lt;chr&gt;         &lt;int&gt;  &lt;dbl&gt;
-## 1 following         1 0.0444
-## 2 accounts          1 0.0610
-## 3 have              1 0.0351
-## 4 been              1 0.0607
-## 5 disputed          1 0.0414
-## 6 on                1 0.0375
-## 7 these             1 0.0448
-## 8 dates             1 0.0227
-## 9 for               1 0.0297
-## # … with 268,591 more rows
+## # A tibble: 585,500 x 3
+##   item1    dimension   value
+##   &lt;chr&gt;        &lt;int&gt;   &lt;dbl&gt;
+## 1 xx               1 -0.0577
+## 2 2019             1 -0.0608
+## 3 i                1 -0.0131
+## 4 have             1 -0.0225
+## 5 previous         1 -0.0252
+## 6 sent             1 -0.0504
+## 7 in               1 -0.0170
+## 8 disputes         1 -0.0192
+## 9 to               1 -0.0103
+## # … with 585,491 more rows
 ```
 
 ---
@@ -502,20 +502,20 @@ tidy_word_vectors %&gt;%
 ```
 
 ```
-## # A tibble: 2,686 x 2
-##    item1     value
-##    &lt;chr&gt;     &lt;dbl&gt;
-##  1 error    0.0571
-##  2 issue    0.0295
-##  3 system   0.0272
-##  4 agency   0.0267
-##  5 problem  0.0263
-##  6 errors   0.0233
-##  7 problems 0.0218
-##  8 identity 0.0211
-##  9 issues   0.0206
-## 10 consumer 0.0188
-## # … with 2,676 more rows
+## # A tibble: 5,855 x 2
+##    item1      value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 error     0.0408
+##  2 issue     0.0274
+##  3 problem   0.0248
+##  4 errors    0.0242
+##  5 issues    0.0220
+##  6 system    0.0220
+##  7 mistake   0.0217
+##  8 correct   0.0160
+##  9 incorrect 0.0159
+## 10 fraud     0.0144
+## # … with 5,845 more rows
 ```
 
 ---
@@ -529,20 +529,20 @@ tidy_word_vectors %&gt;%
 ```
 
 ```
-## # A tibble: 2,686 x 2
+## # A tibble: 5,855 x 2
 ##    item1     value
 ##    &lt;chr&gt;     &lt;dbl&gt;
-##  1 month    0.0828
-##  2 payments 0.0456
-##  3 year     0.0433
-##  4 months   0.0422
-##  5 payment  0.0420
-##  6 paid     0.0355
-##  7 amount   0.0336
-##  8 days     0.0331
-##  9 week     0.0320
-## 10 pay      0.0311
-## # … with 2,676 more rows
+##  1 month    0.0612
+##  2 months   0.0374
+##  3 year     0.0335
+##  4 payment  0.0332
+##  5 payments 0.0318
+##  6 years    0.0311
+##  7 amount   0.0280
+##  8 pay      0.0275
+##  9 days     0.0270
+## 10 monthly  0.0261
+## # … with 5,845 more rows
 ```
 
 ---
@@ -556,20 +556,20 @@ tidy_word_vectors %&gt;%
 ```
 
 ```
-## # A tibble: 2,686 x 2
+## # A tibble: 5,855 x 2
 ##    item1      value
 ##    &lt;chr&gt;      &lt;dbl&gt;
-##  1 fee       0.108 
-##  2 fees      0.0833
-##  3 late      0.0511
-##  4 charge    0.0489
-##  5 charged   0.0457
-##  6 charges   0.0399
-##  7 overdraft 0.0373
-##  8 interest  0.0370
-##  9 15.00     0.0363
-## 10 35.00     0.0353
-## # … with 2,676 more rows
+##  1 fee       0.0881
+##  2 fees      0.0612
+##  3 charge    0.0479
+##  4 charged   0.0467
+##  5 interest  0.0435
+##  6 late      0.0340
+##  7 charges   0.0333
+##  8 overdraft 0.0332
+##  9 charging  0.0287
+## 10 per       0.0279
+## # … with 5,845 more rows
 ```
 
 ---
@@ -621,7 +621,7 @@ dim(doc_matrix)
 ```
 
 ```
-## [1] 13436   100
+## [1] 67186   100
 ```
 
 ---
@@ -839,7 +839,7 @@ dim(doc_matrix)
 ```
 
 ```
-## [1] 13436   100
+## [1] 67182   100
 ```
 
 ---
