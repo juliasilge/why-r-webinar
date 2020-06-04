@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Understanding Word Embeddings</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Julia Silge" />
+    <meta name="date" content="2020-06-04" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <meta name="description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="generator" content="xaringan and remark.js"/>
+    <meta name="twitter:title" content="Understanding Word Embeddings"/>
+    <meta name="twitter:description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="twitter:url" content="https://juliasilge.github.io/why-r-webinar/"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="og:title" content="Understanding Word Embeddings"/>
+    <meta name="og:description" content="Word embeddings statistically model language by mapping words or phrases to vectors of real numbers."/>
+    <meta name="og:url" content="https://juliasilge.github.io/why-r-webinar/"/>
+    <meta name="og:type" content="website"/>
+    <meta name="og:locale" content="en_US"/>
+    <script src="https://use.fontawesome.com/5235085b15.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="css/footer_plus.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;span&gt;juliasilge.github.io/why-r-webinar/&lt;/span&gt;&lt;/div&gt; 
+
+---
+
+class: inverse, left, middle
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Understanding 
+# Word 
+# Embeddings
+
+### Julia Silge | 4 June 2020
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Find me at...
+
+&lt;a href="http://twitter.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="http://github.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://juliasilge.com" style="color: white;"&gt;&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;&amp;nbsp; juliasilge.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://tidytextmining.com" style="color: white;"&gt;&lt;i class="fa fa-book fa-fw"&gt;&lt;/i&gt;&amp;nbsp; tidytextmining.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="mailto:julia.silge@gmail.com" style="color: white;"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; julia.silge@gmail.com&lt;/a&gt;
+
+---
+
+class: inverse, center, middle
+
+# 📑 TEXT AS DATA 📊
+
+---
+
+# Text as data
+
+Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
+
+
+```r
+library(tidyverse)
+
+complaints &lt;- read_csv("complaints.csv.gz") %&gt;%
+  sample_frac(0.1)
+names(complaints)
+```
+
+```
+## [1] "complaint_id"                 "date_received"               
+## [3] "product"                      "issue"                       
+## [5] "company"                      "state"                       
+## [7] "consumer_complaint_narrative"
+```
+
+---
+
+# Text as data
+
+
+```r
+complaints %&gt;%
+  sample_n(10) %&gt;%
+  pull(consumer_complaint_narrative)
+```
+
+```
+##  [1] "Although I am checking for and addressing missing and or deficient aspects of REPORTING COMPLIANCES and not contesting any debt of compliant nature, I should make you aware that since unlawful reporting transitions collection into an equally not complaint circumstance. Being still yet not validated by document fact in compliance to requisite standards, it is to be announced yet again that legally I have no knowledge of the validity of the alleged claims of delinquency and or derogatory nature, nor of the certifiably compliant matter to either any of its collection attempts and or its reporting despite previous consumer filed composed complaints checking for each. Might it be known, especially shall I elect to take this matter up to a civil court, any debt and or derogatory claim must be pursued ( particularly for collection ) in a very defined and precisely compliant and physically verifiable or certifiable manner as detailed in the requisite obeyed federal and state collection and reporting regulations associated with any of the above noted said claim ( s ) to include but not limited to the FCBA, FCRA, HIPAA PRIVACY RULE, FACTA, FDCPA and TCPA, etc. ADDITIONALLY, if an entity acts as a collector and also elects to act as a reporting party of consumer credit they must as well adhere to every single one even each any and all of the regulatory reporting requisites and standards of reporting with legal standing in full accordance of laws and accepted reporting standards. To date, the plaintiff has failed to demonstrate any capacity or willingness to validate the alleged debt much less certify the fair, accurate, complete and compliant reporting of the claims, particularly being significantly deficient is any display of certified metro 2 compliance. As such, given the fact of recent breaches of information collection"
+##  [2] "XX/XX/2019 - I chatted with Amex Customer Service Rep with regards to changing my card account to a no fee card. The customer service rep advised to close the card instead and assured me multiple times that my rewards points will not be impacted because I have another card linked to the same rewards account. \n\nTrusting the company 's representative, I proceeded with closing my account. \n\nXX/XX/2019 - Amex went ahead and revoked my points that I had earned on my account. I called in multiple times over the next few weeks offering to reinstate my card and get my points back but the company has not even responded to my query even though the reps always tell me that I will receive a call back in 2-4 weeks."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [3] "XX/XX/2017, I was involved in a car accident. I had XXXX for a auto insurance carrier and XXXX XXXX for my health insurance. The insurance had already met the policy limit with XXXX and they was supposed to be paid with XXXX  XXXX. I provided the health insurance company with the Letter and payment history to let them process the claim. I called XXXX XXXX for a year and half now. I haven't go nowhere. I met my health deductible with XXXX  XXXX so it should been paid in full. Now, I have this PHOENIX FINANCIAL SERVICES LLC that never sent me a bill nor provided me with this debt."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+##  [4] "I opened a checking account with MoneyLion on XX/XX/2019 to take part in their 'pave the wage campaign which offered a bonus of 17 % of your direct deposit ( Up To {$590.00} XXXX after opening an account, opting in and maintaining direct deposit for 90 days. I opted in through money lion app and have setup a direct deposit though my employer since then and has been receiving it in my MoneyLion account for last 5 months. Even though I have met the terms for bonus, I have not received it. So I called MoneyLion customer service on XX/XX/2019 about this and the agent verified that i have qualified and he is going to escalate this case to a supervisor. I did not hear back from MoneyLion for 3 weeks and so I called again today, on XX/XX/2019, and was told this case is still pending for escalation and they do not have an ETA on when this will be resolved and I will get my sign up bonus.Please look into it so that Money Lion will honor original terms of promotion."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+##  [5] "I lost my job a few months ago ( XX/XX/XXXX ). I did not call Navient until today ( XX/XX/XXXX ) because I figured I would have full-time employment by now. I was told I do not qualify for forbearance because I've maxed it out, I was told I do not qualify for a deferment because of the loan types, I was told I could not lower my payments beyond what they were. I do not have income or a means to pay them. I was told to contact a placement agency but there wasn't anything they could do to work with me on this. \n\nI am not trying to avoid paying my debts but I have been struggling with this since my graduation in XXXX. Both companies are not being held accountable for this situation yet I am."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+##  [6] "I have reached out to XXXX and Transunion in regards to the numerous inquiries that's appearing on my credit report.I let them know that I was a victim of their inquiry issue. They have neglected to remove them as well as bankruptcy and a collection account that does NOT belong to me. They have said it came back as verified and I requested them to provide me who verified the accounts. They have failed to do that as well. XXXX has abided by the law and deleted said accounts and stated they were unverifiable. I am trying to understand how one bureau can not verify accounts and another bureau who will not provide proof of verification can. I also provided documentation from the U.S. BANKRUPTCY COURT whom in which they said furnished the information stating their accusations are false. To my understanding the accounts must be verified by the alleged FURNISHER. Any automated response or e-Oscar verification is unacceptable."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+##  [7] "I originally reached out to capital accounts after seeing a charge on my account with XXXX for a very large, false amount that had never been reported to me by the collection agency or school themselves. I told them the debt was invalid with no supporting documentation with no help I went to the XXXX  of Virginia Department of Higher Education and they found that the school did not have any documents holding me financially responsible for this debt and ruled that i was not responsible. It was in fact invalid, it was noted XXXX did not take the proper steps and was at fault. Fast forward to now Capital accounts still refuses to take the account off and the school is not cooperating with me either despite what the director told higher education, me and supporting documentation. They are hanging up on my face, refusing to allow me to talk to management higher up positions, my calls are continuously \" dropping '' despite being very polite, respectful, calm and showing all proper documentation. They are claiming to wait on the action of the school but the school is claiming to be waiting on them it is a entire run around. the main deal is the amount is not supposed to be on the and needs to be removed expeditiously."                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+##  [8] "I deposited XXXX on XX/XX/2019 and was told that my funds would be available on XX/XX/2019 on the deposit slip with plenty of disclaimers. \nAs of this morning XX/XX/2019 my funds were unavailable. The above mentioned check cleared the account it was drawn upon on XX/XX/2019. This is verified. \nI have bills to pay on time in order to keep up my credit rating and when I personally tried to talk to an employee of Chase I was told that the funds would not be available until XX/XX/XXXX. \nAfter sitting at the bank for XXXX minutes to no avail then next talking on the phone with Chase for almost XXXX minutes my funds were finally released. \nCan a bank legally hold funds for 9 days as they did today or worse for 13 days as they tried to do today? \nI have been a Chase customer for over 25 years!"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+##  [9] "PayPal is charging me for a fraudulent transaction and has a negative amount of {$1300.00} on my account. I have tried to resolve this many times but they are blocking my emails and demanding me to pay this fraudulent transaction. I did not authorize or give consent for this money to be taken out of my account"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+## [10] "This account is reporting as a collection when i paid this balance off before it went into collections. But on my XXXX report it is showing a collections account."
+```
+
+---
+
+# Text as data
+
+What is a typical way to represent this text data for modeling?
+
+
+```r
+library(tidytext)
+library(SnowballC)
+
+complaints %&gt;% 
+  unnest_tokens(word, consumer_complaint_narrative) %&gt;% 
+  anti_join(get_stopwords()) %&gt;%  
+  mutate(stem = wordStem(word)) %&gt;% 
+  count(complaint_id, stem) %&gt;%  
+  bind_tf_idf(stem, complaint_id, n) %&gt;% 
+  cast_dfm(complaint_id, stem, tf_idf)
+```
+
+```
+## Document-feature matrix of: 13,442 documents, 15,564 features (99.6% sparse).
+##          features
+## docs              30    backup     claim    collect        dai    disput  document     enter    equifax
+##   3113822 0.08508184 0.2706615 0.1484087 0.05719523 0.04841901 0.1594449 0.1238266 0.1306297 0.09430187
+##   3113825 0          0         0         0          0          0         0         0         0         
+##   3113886 0          0         0         0          0          0         0         0         0         
+##   3113949 0          0         0         0          0          0         0         0         0         
+##   3113950 0          0         0         0          0          0         0         0         0         
+##   3113968 0          0         0         0.11070045 0          0         0         0         0         
+##          features
+## docs           legal
+##   3113822 0.08863988
+##   3113825 0         
+##   3113886 0         
+##   3113949 0         
+##   3113950 0         
+##   3113968 0         
+## [ reached max_ndoc ... 13,436 more documents, reached max_nfeat ... 15,554 more features ]
+```
+
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# This representation...
+
+- .large[is incredibly sparse]
+- .large[of high dimensionality]
+- .large[with a huge number of features]
+
+---
+
+class: inverse, center, middle
+
+# 📄 WORD EMBEDDINGS 📔
+
+---
+
+class: right, middle
+
+&lt;h1 class="fa fa-quote-left fa-fw"&gt;&lt;/h1&gt;
+
+&lt;h1&gt; You shall know a word by the company it keeps. &lt;/h1&gt;
+
+&lt;h1 class="fa fa-quote-right fa-fw"&gt;&lt;/h1&gt;
+
+.large[John Rupert Firth]
+
+---
+
+class: inverse
+
+# Modern word embeddings
+
+--
+
+- word2vec
+
+--
+
+- GloVe
+
+--
+
+- fastText
+
+--
+
+- language models with transformers like ULMFiT and ELMo
+
+---
+
+class: inverse, left, top
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# We can determine word embeddings using...
+
+- .large[word counts]
+- .large[matrix factorization]
+
+.footnote[
+&lt;a href="https://multithreaded.stitchfix.com/blog/2017/10/18/stop-using-word2vec/" style="color: white"&gt;Moody, Chris. "Stop using word2vec." MultiThreaded blog (2017).&lt;/a&gt;
+]
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```r
+tidy_complaints &lt;- complaints %&gt;%
+  select(complaint_id, consumer_complaint_narrative) %&gt;%
+  unnest_tokens(word, consumer_complaint_narrative) %&gt;%
+  group_by(word) %&gt;%
+  filter(n() &gt;= 50) %&gt;%
+  ungroup()
+
+tidy_complaints
+```
+
+---
+
+# Counting words
+
+First, we tokenize and transform this dataset to a [tidy data structure](https://www.tidytextmining.com/).
+
+
+```
+## # A tibble: 2,461,874 x 2
+##    complaint_id word     
+##           &lt;dbl&gt; &lt;chr&gt;    
+##  1      3290499 the      
+##  2      3290499 following
+##  3      3290499 accounts 
+##  4      3290499 have     
+##  5      3290499 been     
+##  6      3290499 disputed 
+##  7      3290499 on       
+##  8      3290499 these    
+##  9      3290499 dates    
+## 10      3290499 for      
+## # … with 2,461,864 more rows
+```
+
+---
+
+# Counting words
+
+Next, we can create nested dataframes.
+
+
+```r
+nested_words &lt;- tidy_complaints %&gt;%
+  nest(words = c(word))
+
+nested_words
+```
+
+```
+## # A tibble: 13,436 x 2
+##    complaint_id words             
+##           &lt;dbl&gt; &lt;list&gt;            
+##  1      3290499 &lt;tibble [100 × 1]&gt;
+##  2      3137216 &lt;tibble [69 × 1]&gt; 
+##  3      3271177 &lt;tibble [239 × 1]&gt;
+##  4      3359886 &lt;tibble [345 × 1]&gt;
+##  5      3382641 &lt;tibble [71 × 1]&gt; 
+##  6      3517411 &lt;tibble [157 × 1]&gt;
+##  7      3370655 &lt;tibble [122 × 1]&gt;
+##  8      3388848 &lt;tibble [136 × 1]&gt;
+##  9      3443926 &lt;tibble [38 × 1]&gt; 
+## 10      3135535 &lt;tibble [125 × 1]&gt;
+## # … with 13,426 more rows
+```
+
+---
+
+# Time to SLIDE ⚡
+
+Let's identify **windows** in order to calculate the skipgram probabilities.
+
+---
+
+# Time to SLIDE ⚡
+
+
+
+```r
+slide_windows &lt;- function(tbl, window_size) {
+  
+  skipgrams &lt;- slider::slide(
+    tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE
+    )
+  
+  safe_mutate &lt;- safely(mutate)
+  
+  out &lt;- map2(skipgrams, 1:length(skipgrams), ~ safe_mutate(.x, window_id = .y))
+  
+  out %&gt;%
+    transpose() %&gt;% 
+    pluck("result") %&gt;% 
+    compact() %&gt;%
+    bind_rows()
+}
+```
+
+---
+
+class: inverse
+
+# Window size? 🤔
+
+--
+
+- Determines semantic meaning the embeddings capture
+
+--
+
+- Smaller window size (3-4) focuses on how the word is used and learns what other words are functionally similar
+
+--
+
+- Larger window size (~10) captures the domain or topic of each word
+
+---
+
+class: inverse
+
+# Point-wise mutual information
+
+--
+
+- How often do words occur on their own?
+
+--
+
+- How often words occur together with other words?
+
+--
+
+- PMI is a measure of association to compute this
+
+--
+
+- PMI is logarithm of the probability of finding two words together, normalized for the probability of finding each of the words alone
+
+
+
+---
+
+# Calculate PMI
+
+We use PMI to measure which words occur together more often than expected based on how often they occurred on their own.
+
+
+```r
+library(widyr)
+library(furrr)
+
+plan(multiprocess)  ## for parallel processing
+
+tidy_pmi &lt;- nested_words %&gt;%  
+  mutate(words = future_map(words, slide_windows, 4)) %&gt;%
+  unnest(words) %&gt;%
+  unite(window_id, complaint_id, window_id) %&gt;%
+  pairwise_pmi(word, window_id)
+```
+
+---
+
+# Calculate PMI
+
+When PMI is high, two words are associated with each other, likely to occur together.
+
+
+```
+## # A tibble: 1,096,412 x 3
+##    item1     item2     pmi
+##    &lt;chr&gt;     &lt;chr&gt;   &lt;dbl&gt;
+##  1 following the    1.37  
+##  2 accounts  the    0.101 
+##  3 have      the   -0.875 
+##  4 been      the   -1.21  
+##  5 disputed  the    0.342 
+##  6 on        the   -0.133 
+##  7 these     the   -1.79  
+##  8 dates     the    0.762 
+##  9 for       the   -0.0214
+## 10 reasons   the    0.180 
+## # … with 1,096,402 more rows
+```
+
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors &lt;- tidy_pmi %&gt;%
+  widely_svd(
+    item1, item2, pmi, 
+    nv = 100, maxit = 1000
+  )
+```
+
+---
+
+# Time for word vectors! 🎉
+
+We determine word vectors using singular value decomposition.
+
+
+```r
+tidy_word_vectors
+```
+
+```
+## # A tibble: 268,600 x 3
+##   item1     dimension  value
+##   &lt;chr&gt;         &lt;int&gt;  &lt;dbl&gt;
+## 1 following         1 0.0444
+## 2 accounts          1 0.0610
+## 3 have              1 0.0351
+## 4 been              1 0.0607
+## 5 disputed          1 0.0414
+## 6 on                1 0.0375
+## 7 these             1 0.0448
+## 8 dates             1 0.0227
+## 9 for               1 0.0297
+## # … with 268,591 more rows
+```
+
+---
+
+class: inverse, left, bottom
+
+## Each word can be represented as a numeric vector in this 
+
+- .large[new,]
+- .large[dense,]
+- .large[100-dimensional] 
+
+## feature space. 
+
+---
+
+# Explore CFPB word embeddings
+
+Which words are close to each other in this new feature space of word embeddings?
+
+
+```r
+nearest_neighbors &lt;- function(df, token) {
+  df %&gt;%
+    widely(~ . %*% (.[token, ]), 
+           sort = TRUE, 
+           maximum_size = NULL)(item1, dimension, value) %&gt;%
+    select(-item2)
+}
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 2,686 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 error    0.0571
+##  2 issue    0.0295
+##  3 system   0.0272
+##  4 agency   0.0267
+##  5 problem  0.0263
+##  6 errors   0.0233
+##  7 problems 0.0218
+##  8 identity 0.0211
+##  9 issues   0.0206
+## 10 consumer 0.0188
+## # … with 2,676 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 2,686 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 month    0.0828
+##  2 payments 0.0456
+##  3 year     0.0433
+##  4 months   0.0422
+##  5 payment  0.0420
+##  6 paid     0.0355
+##  7 amount   0.0336
+##  8 days     0.0331
+##  9 week     0.0320
+## 10 pay      0.0311
+## # … with 2,676 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 2,686 x 2
+##    item1      value
+##    &lt;chr&gt;      &lt;dbl&gt;
+##  1 fee       0.108 
+##  2 fees      0.0833
+##  3 late      0.0511
+##  4 charge    0.0489
+##  5 charged   0.0457
+##  6 charges   0.0399
+##  7 overdraft 0.0373
+##  8 interest  0.0370
+##  9 15.00     0.0363
+## 10 35.00     0.0353
+## # … with 2,676 more rows
+```
+
+---
+
+# Explore CFPB word embeddings
+
+
+```r
+tidy_word_vectors %&gt;%
+  filter(dimension &lt;= 8) %&gt;%
+  group_by(dimension) %&gt;%
+  top_n(12, abs(value)) %&gt;%
+  ungroup %&gt;%
+  ggplot(aes(value, item1, fill = as.factor(dimension))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~dimension, scales = "free_y", ncol = 4)
+```
+
+---
+
+class: center
+
+&lt;img src="index_files/figure-html/unnamed-chunk-18-1.png" width="95%" /&gt;
+
+---
+
+class: center
+
+&lt;img src="index_files/figure-html/unnamed-chunk-19-1.png" width="95%" /&gt;
+
+---
+
+# Embeddings in modeling
+
+The classic and simplest approach is to treat each document as a collection of words and summarize the word embeddings into **document embeddings**.
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;% 
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+embedding_matrix &lt;- tidy_word_vectors %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% embedding_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 13436   100
+```
+
+---
+
+class: inverse, center, middle
+
+### 😭 WHAT IF YOUR DATASET IS TOO SMALL? 😩
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+library(textdata)
+
+glove6b &lt;- embedding_glove6b(dimensions = 100)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+
+```r
+glove6b
+```
+
+```
+## # A tibble: 400,000 x 101
+##    token      d1      d2      d3      d4      d5      d6      d7      d8      d9
+##    &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 "the" -0.0382 -0.245   0.728  -0.400   0.0832  0.0440 -0.391   0.334  -0.575 
+##  2 ","   -0.108   0.111   0.598  -0.544   0.674   0.107   0.0389  0.355   0.0635
+##  3 "."   -0.340   0.209   0.463  -0.648  -0.384   0.0380  0.171   0.160   0.466 
+##  4 "of"  -0.153  -0.243   0.898   0.170   0.535   0.488  -0.588  -0.180  -1.36  
+##  5 "to"  -0.190   0.0500  0.191  -0.0492 -0.0897  0.210  -0.550   0.0984 -0.201 
+##  6 "and" -0.0720  0.231   0.0237 -0.506   0.339   0.196  -0.329   0.184  -0.181 
+##  7 "in"   0.0857 -0.222   0.166   0.134   0.382   0.354   0.0129  0.225  -0.438 
+##  8 "a"   -0.271   0.0440 -0.0203 -0.174   0.644   0.712   0.355   0.471  -0.296 
+##  9 "\""  -0.305  -0.236   0.176  -0.729  -0.283  -0.256   0.266   0.0253 -0.0748
+## 10 "'s"   0.589  -0.202   0.735  -0.683  -0.197  -0.180  -0.392   0.342  -0.606 
+## # … with 399,990 more rows, and 91 more variables: d10 &lt;dbl&gt;, d11 &lt;dbl&gt;,
+## #   d12 &lt;dbl&gt;, d13 &lt;dbl&gt;, d14 &lt;dbl&gt;, d15 &lt;dbl&gt;, d16 &lt;dbl&gt;, d17 &lt;dbl&gt;,
+## #   d18 &lt;dbl&gt;, d19 &lt;dbl&gt;, …
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```r
+tidy_glove &lt;- glove6b %&gt;%
+  pivot_longer(contains("d"),
+               names_to = "dimension") %&gt;%
+  rename(item1 = token)
+```
+
+---
+
+# Try pre-trained word embeddings
+
+To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
+
+
+```
+## # A tibble: 40,000,000 x 3
+##    item1 dimension   value
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 the   d1        -0.0382
+##  2 the   d2        -0.245 
+##  3 the   d3         0.728 
+##  4 the   d4        -0.400 
+##  5 the   d5         0.0832
+##  6 the   d6         0.0440
+##  7 the   d7        -0.391 
+##  8 the   d8         0.334 
+##  9 the   d9        -0.575 
+## 10 the   d10        0.0875
+## # … with 39,999,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("error")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1       value
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 error        34.6
+##  2 errors       28.1
+##  3 data         19.8
+##  4 inning       19.4
+##  5 game         19.3
+##  6 percentage   19.3
+##  7 probability  19.2
+##  8 unforced     19.1
+##  9 fault        19.1
+## 10 point        19.0
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("month")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1     value
+##    &lt;chr&gt;     &lt;dbl&gt;
+##  1 month      32.4
+##  2 year       31.2
+##  3 last       30.6
+##  4 week       30.5
+##  5 wednesday  29.6
+##  6 tuesday    29.5
+##  7 monday     29.3
+##  8 thursday   29.1
+##  9 percent    28.9
+## 10 friday     28.9
+## # … with 399,990 more rows
+```
+
+---
+
+# Explore GloVe word embeddings
+
+
+
+```r
+tidy_glove %&gt;%
+  nearest_neighbors("fee")
+```
+
+```
+## # A tibble: 400,000 x 2
+##    item1        value
+##    &lt;chr&gt;        &lt;dbl&gt;
+##  1 fee           39.8
+##  2 fees          30.7
+##  3 pay           26.6
+##  4 $             26.4
+##  5 salary        25.9
+##  6 payment       25.9
+##  7 £             25.4
+##  8 tax           24.9
+##  9 payments      23.8
+## 10 subscription  23.1
+## # … with 399,990 more rows
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Pre-trained word embeddings...
+
+- encode rich semantic relationships
+
+- can be less than ideal for specific tasks
+
+---
+
+class: inverse
+
+# How can we integrate pre-trained word embeddings in modeling?
+
+--
+
+- Again, we can create simple document embeddings by summarizing
+
+--
+
+- The GloVe embeddings do not contain all the tokens in the CPFB complaints, and vice versa
+
+---
+
+
+```r
+word_matrix &lt;- tidy_complaints %&gt;%
+  inner_join(tidy_glove %&gt;%
+               distinct(item1) %&gt;%
+               rename(word = item1)) %&gt;%
+  count(complaint_id, word) %&gt;%  
+  cast_sparse(complaint_id, word, n)
+
+glove_matrix &lt;- tidy_glove %&gt;%
+  inner_join(tidy_complaints %&gt;% 
+               distinct(word) %&gt;%
+               rename(item1 = word)) %&gt;%
+  cast_sparse(item1, dimension, value)
+
+doc_matrix &lt;- word_matrix %*% glove_matrix
+
+dim(doc_matrix)
+```
+
+```
+## [1] 13436   100
+```
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Fairness and 
+# Word 
+# Embeddings 
+
+---
+
+# Fairness and word embeddings 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- Human prejudice or bias in the corpus becomes imprinted into the embeddings
+
+---
+
+class: inverse
+
+# Fairness and word embeddings 
+
+--
+
+- African American first names are associated with more unpleasant feelings than European American first names
+
+--
+
+- Women's first names are more associated with family and men's first names are more associated with career
+
+--
+
+- Terms associated with women are more associated with the arts and terms associated with men are more associated with science
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1608.07187" style="color: white"&gt;Caliskan, Bryson, and Narayanan. "Semantics Derived Automatically from Language Corpora Contain Human-Like Biases." Science 356.6334 (2017): 183–186.&lt;/a&gt;
+]
+
+---
+
+&lt;img src="figs/turkish.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse, middle, center
+
+## Bias is so ingrained in word embeddings that they can be used to quantify change in social attitudes over time
+
+.footnote[
+&lt;a href="https://www.pnas.org/content/115/16/E3635" style="color: white"&gt;Garg, Nikhil, et al. "Word embeddings quantify 100 years of gender and ethnic stereotypes." Proceedings of the National Academy of Sciences 115.16 (2018): E3635-E3644.&lt;/a&gt;
+]
+
+---
+
+# Biased training data 
+
+--
+
+- Embeddings are trained or learned from a large corpus of text data
+
+--
+
+- For example, consider the case of Wikipedia
+
+--
+
+- Wikipedia both reflects social/historical biases **and** generates bias
+
+
+.footnote[
+[Wagner, Claudia, et al. "Women through the glass ceiling: gender asymmetries in Wikipedia." EPJ Data Science 5.1 (2016): 5.](https://link.springer.com/article/10.1140/epjds/s13688-016-0066-4)
+]
+
+---
+
+# Biased embeddings in models
+
+Consider a straightforward sentiment analysis model trained to predict how positive text is. **Compare:**
+
+.pull-left[
+"Let's go get Italian food!" 😊
+
+]
+
+.pull-right[
+"Let's go get Mexican food!" 😕
+]
+
+
+.footnote[
+[Speer, Robyn. "How to make a racist AI without really trying." ConceptNet blog (2017).](http://blog.conceptnet.io/posts/2017/how-to-make-a-racist-ai-without-really-trying/)
+]
+---
+
+class: inverse, left, top
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Consider some options
+
+--
+
+- .large[Find your own embeddings]
+
+--
+
+- .large[Consider not using embeddings]
+
+--
+
+- .large[Can embeddings be debiased?]
+---
+
+class: inverse
+
+# Can embeddings be debiased?
+
+--
+
+- Embeddings can be reprojected to mitigate a specific bias (such as gender bias) using specific sets of words
+
+--
+
+- Training data can be augmented with counterfactuals
+
+--
+
+- Other researchers suggest that fairness corrections occur at a decision
+
+--
+
+- Evidence indicates that debiasing still allows stereotypes to seep back in
+
+
+.footnote[
+&lt;a href="https://arxiv.org/abs/1903.03862" style="color: white"&gt;Gonen, Hila, and Yoav Goldberg. "Lipstick on a pig: Debiasing methods cover up systematic gender biases in word embeddings but do not remove them." arXiv preprint arXiv:1903.03862 (2019).&lt;/a&gt;
+]
+
+---
+
+class: inverse, left, bottom
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+## Word embeddings in the
+# REAL WORLD
+
+---
+
+class: inverse, left
+
+background-image: url(figs/patrick-fore-0gkw_9fy0eQ-unsplash.jpg)
+background-size: cover
+
+# Thanks!
+
+&lt;a href="http://twitter.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="http://github.com/juliasilge" style="color: white;"&gt;&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;&amp;nbsp; @juliasilge&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://juliasilge.com" style="color: white;"&gt;&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;&amp;nbsp; juliasilge.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://tidytextmining.com" style="color: white;"&gt;&lt;i class="fa fa-book fa-fw"&gt;&lt;/i&gt;&amp;nbsp; tidytextmining.com&lt;/a&gt;&lt;br&gt;
+&lt;a href="mailto:julia.silge@gmail.com" style="color: white;"&gt;&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;&amp;nbsp; julia.silge@gmail.com&lt;/a&gt;
+
+Slides created with &lt;a href="http://remarkjs.com/" style="color: #5A6B8C;"&gt;&lt;b&gt;remark.js&lt;/b&gt;&lt;/a&gt; and &lt;a href="https://github.com/yihui/xaringan" style="color: #5A6B8C;"&gt;&lt;b&gt;xaringan&lt;/b&gt;&lt;/a&gt;
+
+Photo by &lt;a href="https://unsplash.com/@patrickian4?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" style="color: #5A6B8C;"&gt;&lt;b&gt;Patrick Fore&lt;/b&gt;&lt;/a&gt; on &lt;a href="https://unsplash.com/s/photos/letters?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" style="color: #5A6B8C;"&gt;&lt;b&gt;Unsplash&lt;/b&gt;&lt;/a&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightLanguage": "r",
+"highlightStyle": "docco",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

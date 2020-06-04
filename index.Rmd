@@ -1,14 +1,15 @@
 ---
 title: "Understanding Word Embeddings"
 author: "Julia Silge"
-date: '2020-03-12`'
+date: "2020-06-04"
 output:
   xaringan::moon_reader:
     lib_dir: libs
     css: ["default", "xaringan-themer.css", "css/footer_plus.css"]
     nature:
       beforeInit: "https://platform.twitter.com/widgets.js"
-      highlightStyle: github
+      highlightLanguage: "r"
+      highlightStyle: "docco"
       highlightLines: true
       countIncrementalSlides: false
       ratio: "16:9"
@@ -20,12 +21,29 @@ output:
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(knitr)
-knitr::opts_chunk$set(cache = TRUE, warning = FALSE, 
-                      message = FALSE, dpi = 180, cache.lazy = FALSE)
+knitr::opts_chunk$set(
+  cache = TRUE, warning = FALSE, 
+  message = FALSE, cache.lazy = FALSE,
+  fig.retina = 3
+)
 library(tidyverse)
 library(silgelib)
 theme_set(theme_plex())
 conflicted::conflict_prefer("filter", "dplyr")
+```
+
+```{r meta, echo=FALSE}
+library(metathis)
+meta() %>%
+  meta_general(
+    description = "Word embeddings statistically model language by mapping words or phrases to vectors of real numbers.",
+    generator = "xaringan and remark.js"
+  ) %>% 
+  meta_social(
+    title = "Understanding Word Embeddings",
+    url = "https://juliasilge.github.io/why-r-webinar/",
+    og_type = "website"
+  )
 ```
 
 ```{r include=FALSE, eval=FALSE}
@@ -58,7 +76,7 @@ mono_accent(
 
 layout: true
 
-<div class="my-footer"><span>bit.ly/silge-byu</span></div> 
+<div class="my-footer"><span>juliasilge.github.io/why-r-webinar/</span></div> 
 
 ---
 
@@ -71,7 +89,7 @@ background-size: cover
 # Word 
 # Embeddings
 
-### Julia Silge | 12 March 2020
+### Julia Silge | 4 June 2020
 
 ---
 
@@ -100,10 +118,11 @@ class: inverse, center, middle
 
 Let's look at complaints submitted to the [United States Consumer Financial Protection Bureau (CFPB)](https://www.consumerfinance.gov/data-research/consumer-complaints/).
 
-```{r}
+```{r R.options = list(width = 80)}
 library(tidyverse)
 
-complaints <- read_csv("complaints.csv.gz")
+complaints <- read_csv("complaints.csv.gz") %>%
+  sample_frac(0.1)
 names(complaints)
 ```
 
@@ -259,10 +278,17 @@ nested_words
 
 Let's identify **windows** in order to calculate the skipgram probabilities.
 
+---
+
+# Time to SLIDE `r emo::ji("zap")`
+
+
 ```{r}
 slide_windows <- function(tbl, window_size) {
   
-  skipgrams <- slider::slide(tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE)
+  skipgrams <- slider::slide(
+    tbl, ~.x, .after = window_size - 1, .step = 1, .complete = TRUE
+    )
   
   safe_mutate <- safely(mutate)
   
@@ -341,9 +367,9 @@ tidy_pmi <- nested_words %>%
 
 # Calculate PMI
 
-When PMI is high, the two words are associated with each other, likely to occur together.
+When PMI is high, two words are associated with each other, likely to occur together.
 
-```{r}
+```{r echo=FALSE}
 tidy_pmi
 ```
 
@@ -368,7 +394,7 @@ tidy_word_vectors <- tidy_pmi %>%
 
 We determine word vectors using singular value decomposition.
 
-```{r}
+```{r R.options = list(tibble.max_extra_cols=5, tibble.print_min=9, tibble.width=60)}
 tidy_word_vectors
 ```
 
@@ -393,7 +419,9 @@ Which words are close to each other in this new feature space of word embeddings
 ```{r}
 nearest_neighbors <- function(df, token) {
   df %>%
-    widely(~ . %*% (.[token, ]), sort = TRUE, maximum_size = NULL)(item1, dimension, value) %>%
+    widely(~ . %*% (.[token, ]), 
+           sort = TRUE, 
+           maximum_size = NULL)(item1, dimension, value) %>%
     select(-item2)
 }
 ```
@@ -435,33 +463,35 @@ tidy_word_vectors %>%
   group_by(dimension) %>%
   top_n(12, abs(value)) %>%
   ungroup %>%
-  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  ggplot(aes(value, item1, fill = as.factor(dimension))) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~dimension, scales = "free_y", ncol = 4) +
-  coord_flip()
+  facet_wrap(~dimension, scales = "free_y", ncol = 4)
 ```
 
 ---
 
-```{r echo=FALSE, fig.height=4.2}
+class: center
+
+```{r echo=FALSE, fig.height=4, fig.width=7, out.width="95%"}
 tidy_word_vectors %>%
   dplyr::filter(dimension <= 8) %>%
   group_by(dimension) %>%
   top_n(12, abs(value)) %>%
   ungroup %>%
   mutate(item1 = reorder_within(item1, value, dimension)) %>%
-  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  ggplot(aes(value, item1, fill = as.factor(dimension))) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~dimension, scales = "free_y", ncol = 4) +
-  scale_x_reordered() +
-  coord_flip() +
+  scale_y_reordered() +
   theme(axis.text.x = element_blank()) +
   labs(x = NULL, y = NULL)
 ```
 
 ---
 
-```{r echo=FALSE, fig.height=4.2}
+class: center
+
+```{r echo=FALSE, fig.height=4, fig.width=7, out.width="95%"}
 tidy_word_vectors %>%
   dplyr::filter(dimension > 8,
                 dimension <= 16) %>%
@@ -469,11 +499,10 @@ tidy_word_vectors %>%
   top_n(12, abs(value)) %>%
   ungroup %>%
   mutate(item1 = reorder_within(item1, value, dimension)) %>%
-  ggplot(aes(item1, value, fill = as.factor(dimension))) +
+  ggplot(aes(value, item1, fill = as.factor(dimension))) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~dimension, scales = "free_y", ncol = 4) +
-  scale_x_reordered() +
-  coord_flip() +
+  scale_y_reordered() +
   theme(axis.text.x = element_blank()) +
   labs(x = NULL, y = NULL)
 ```
@@ -517,7 +546,7 @@ glove6b <- embedding_glove6b(dimensions = 100)
 
 # Try pre-trained word embeddings
 
-```{r}
+```{r R.options = list(tibble.max_extra_cols=10, tibble.print_max=5, tibble.width=80)}
 glove6b
 ```
 
@@ -540,7 +569,7 @@ tidy_glove <- glove6b %>%
 
 To compare to the word embeddings we created ourselves, let's transform these to a tidy data structure.
 
-```{r}
+```{r echo = FALSE}
 tidy_glove
 ```
 
