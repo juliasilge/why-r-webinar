@@ -122,7 +122,7 @@ Let's look at complaints submitted to the [United States Consumer Financial Prot
 library(tidyverse)
 
 complaints <- read_csv("complaints.csv.gz") %>%
-  sample_frac(0.01)
+  sample_frac(0.1)
 names(complaints)
 ```
 
